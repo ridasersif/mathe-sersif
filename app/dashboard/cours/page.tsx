@@ -19,7 +19,7 @@ const AUTH = 'http://localhost:3002';
 const CATEGORIES = ['Analyse', 'Algèbre', 'Probabilités', 'Topologie', 'Géométrie', 'Autre'];
 const LEVELS = ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2'];
 
-const empty = { title: '', description: '', category: 'Analyse', level: 'Licence 1', pdfUrl: '', pdfName: '' };
+const empty = { title: '', description: '', category: 'Analyse', level: 'Licence 1', pdfUrl: '', pdfName: '', imageUrl: '' };
 
 export default function DashboardCoursPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -27,6 +27,7 @@ export default function DashboardCoursPage() {
   const [editing, setEditing] = useState<Course | null>(null);
   const [form, setForm] = useState({ ...empty });
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [imgFile, setImgFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -37,8 +38,23 @@ export default function DashboardCoursPage() {
   }
   useEffect(() => { fetchCourses(); }, []);
 
-  function openAdd() { setEditing(null); setForm({ ...empty }); setPdfFile(null); setError(''); setShowModal(true); }
-  function openEdit(c: Course) { setEditing(c); setForm({ title: c.title, description: c.description, category: c.category, level: c.level, pdfUrl: c.pdfUrl, pdfName: c.pdfName }); setPdfFile(null); setError(''); setShowModal(true); }
+  function openAdd() { setEditing(null); setForm({ ...empty }); setPdfFile(null); setImgFile(null); setError(''); setShowModal(true); }
+  function openEdit(c: Course) { 
+    setEditing(c); 
+    setForm({ 
+      title: c.title, 
+      description: c.description, 
+      category: c.category, 
+      level: c.level, 
+      pdfUrl: c.pdfUrl, 
+      pdfName: c.pdfName,
+      imageUrl: c.imageUrl || ''
+    }); 
+    setPdfFile(null); 
+    setImgFile(null);
+    setError(''); 
+    setShowModal(true); 
+  }
   function closeModal() { setShowModal(false); setEditing(null); setError(''); }
 
   async function handleSubmit(e: FormEvent) {
@@ -46,6 +62,7 @@ export default function DashboardCoursPage() {
     setLoading(true); setError('');
     try {
       let pdfUrl = form.pdfUrl, pdfName = form.pdfName;
+      let imageUrl = form.imageUrl;
 
       if (pdfFile) {
         const fd = new FormData(); fd.append('pdf', pdfFile);
@@ -55,7 +72,15 @@ export default function DashboardCoursPage() {
         pdfUrl = upData.pdfUrl; pdfName = upData.pdfName;
       }
 
-      const payload = { ...form, pdfUrl, pdfName };
+      if (imgFile) {
+        const fd = new FormData(); fd.append('image', imgFile);
+        const up = await fetch(`${AUTH}/upload-image`, { method: 'POST', body: fd });
+        if (!up.ok) throw new Error('Erreur lors de l\'upload de l\'image');
+        const upData = await up.json();
+        imageUrl = upData.imageUrl;
+      }
+
+      const payload = { ...form, pdfUrl, pdfName, imageUrl };
       const now = new Date().toISOString();
       if (editing) {
         await fetch(`${API}/courses/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, updatedAt: now }) });
@@ -188,7 +213,26 @@ export default function DashboardCoursPage() {
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">Fichier PDF</label>
+                <label className="form-label">Image de couverture</label>
+                <div className="upload-zone" onClick={() => document.getElementById('img-input')?.click()}>
+                  <div className="upload-zone-icon">
+                    <Upload size={24} />
+                  </div>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    {imgFile ? imgFile.name : (form.imageUrl ? 'Changer l\'image' : 'Cliquez pour sélectionner une image')}
+                  </p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>JPG, PNG · Max 5 Mo</p>
+                </div>
+                <input id="img-input" type="file" accept="image/*" style={{ display: 'none' }} onChange={e => setImgFile(e.target.files?.[0] || null)} />
+              </div>
+              {!imgFile && (
+                <div className="form-group">
+                  <label className="form-label">URL de l'image (si déjà hébergée)</label>
+                  <input className="form-input" value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} placeholder="/uploads/mon-image.jpg" />
+                </div>
+              )}
+              <div className="form-group">
+                <label className="form-label">Fichier PDF *</label>
                 <div className="upload-zone" onClick={() => document.getElementById('pdf-input')?.click()}>
                   <div className="upload-zone-icon">
                     <Upload size={24} />
@@ -206,7 +250,7 @@ export default function DashboardCoursPage() {
                   <input className="form-input" value={form.pdfUrl} onChange={e => setForm({ ...form, pdfUrl: e.target.value })} placeholder="/uploads/mon-cours.pdf" />
                 </div>
               )}
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 16 }}>
                 <button type="button" onClick={closeModal} className="btn btn-ghost">Annuler</button>
                 <button type="submit" className="btn btn-primary" disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {loading ? <span className="spinner" style={{ width: 16, height: 16 }} /> : <CheckCircle2 size={18} />}

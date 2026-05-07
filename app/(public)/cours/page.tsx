@@ -68,7 +68,10 @@ export default async function CoursPage({ searchParams }: { searchParams: Promis
           {filtered.length > 0 ? (
             <div className="grid-3">
               {filtered.map((c: any) => (
-                <div key={c.id} className="card course-card">
+                <div key={c.id} className="card course-card animate-fadeUp">
+                  <div className="card-image">
+                    <img src={c.imageUrl || `https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800`} alt={c.title} />
+                  </div>
                   <div className="course-card-header">
                     <div className="course-icon">
                       {(() => {

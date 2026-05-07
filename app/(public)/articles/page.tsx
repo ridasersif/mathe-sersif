@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getArticles } from '@/lib/api';
+import { Newspaper } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Articles & Recherche',
@@ -28,7 +29,10 @@ export default async function ArticlesPage() {
           {articles.length > 0 ? (
             <div className="grid-3">
               {articles.map((a: any) => (
-                <Link key={a.id} href={`/articles/${a.id}`} className="card article-card" style={{ display: 'block' }}>
+                <Link key={a.id} href={`/articles/${a.id}`} className="card article-card" style={{ display: 'flex' }}>
+                  <div className="card-image">
+                    <img src={a.imageUrl || `https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800`} alt={a.title} />
+                  </div>
                   <p className="article-card-date">
                     {new Date(a.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
@@ -45,7 +49,9 @@ export default async function ArticlesPage() {
             </div>
           ) : (
             <div className="empty-state">
-              <div className="empty-state-icon">✍️</div>
+              <div className="empty-state-icon">
+                <Newspaper size={48} strokeWidth={1} />
+              </div>
               <p className="empty-state-title">Aucun article publié</p>
               <p className="empty-state-text">Les articles seront disponibles prochainement.</p>
             </div>

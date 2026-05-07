@@ -9,6 +9,7 @@ export interface Course {
   level: string;
   pdfUrl: string;
   pdfName: string;
+  imageUrl?: string; // Image field
   createdAt: string;
   updatedAt: string;
 }
@@ -19,9 +20,21 @@ export interface Article {
   excerpt: string;
   content: string;
   tags: string[];
+  imageUrl?: string; // Image field
   published: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export async function uploadImage(file: File): Promise<{ imageUrl: string }> {
+  const formData = new FormData();
+  formData.append('image', file);
+  const res = await fetch(`${AUTH_BASE}/upload-image`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) throw new Error('Erreur lors de l\'upload de l\'image');
+  return res.json();
 }
 
 // ─── Courses ──────────────────────────────────────────────────────────────────

@@ -140,12 +140,28 @@ app.post('/auth/upload-photo', uploadImage.single('photo'), async (req, res) => 
   const photoUrl = `/uploads/${req.file.filename}`;
   try {
     const db = await readDB();
+    
+    // Delete old photo if it exists
+    if (db.profile.photo) {
+      const oldPath = path.join(__dirname, 'public', db.profile.photo);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
     db.profile = { ...db.profile, photo: photoUrl, updatedAt: new Date().toISOString() };
     await writeDB(db);
     res.json({ photoUrl });
-  } catch {
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Erreur lors de la sauvegarde' });
   }
+});
+
+// ─── Generic Image Upload ─────────────────────────────────────────────────────
+app.post('/upload-image', uploadImage.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Aucune image fournie' });
+  res.json({ imageUrl: `/uploads/${req.file.filename}` });
 });
 
 // ─── Upload PDF route ─────────────────────────────────────────────────────────
@@ -161,5 +177,6 @@ app.listen(PORT, () => {
   console.log(`👤 GET  /auth/profile`);
   console.log(`✏️  PATCH /auth/profile`);
   console.log(`🖼️  POST /auth/upload-photo`);
+  console.log(`🖼️  POST /upload-image`);
   console.log(`📄 POST /upload\n`);
 });

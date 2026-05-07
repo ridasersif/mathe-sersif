@@ -11,17 +11,20 @@ import {
   CheckCircle2, 
   AlertCircle,
   Newspaper,
-  Calendar
+  Calendar,
+  Upload
 } from 'lucide-react';
 
 const API = 'http://localhost:3001';
-const empty = { title: '', excerpt: '', content: '', tags: '', published: false };
+const AUTH = 'http://localhost:3002';
+const empty = { title: '', excerpt: '', content: '', tags: '', imageUrl: '', published: false };
 
 export default function DashboardArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Article | null>(null);
   const [form, setForm] = useState({ ...empty });
+  const [imgFile, setImgFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -32,10 +35,18 @@ export default function DashboardArticlesPage() {
   }
   useEffect(() => { fetchArticles(); }, []);
 
-  function openAdd() { setEditing(null); setForm({ ...empty }); setError(''); setShowModal(true); }
+  function openAdd() { setEditing(null); setForm({ ...empty }); setImgFile(null); setError(''); setShowModal(true); }
   function openEdit(a: Article) {
     setEditing(a);
-    setForm({ title: a.title, excerpt: a.excerpt, content: a.content, tags: a.tags?.join(', ') || '', published: a.published });
+    setForm({ 
+      title: a.title, 
+      excerpt: a.excerpt, 
+      content: a.content, 
+      tags: a.tags?.join(', ') || '', 
+      imageUrl: a.imageUrl || '',
+      published: a.published 
+    });
+    setImgFile(null);
     setError(''); setShowModal(true);
   }
   function closeModal() { setShowModal(false); setEditing(null); setError(''); }
@@ -43,10 +54,21 @@ export default function DashboardArticlesPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true); setError('');
-    const tags = form.tags.split(',').map(t => t.trim()).filter(Boolean);
-    const payload = { title: form.title, excerpt: form.excerpt, content: form.content, tags, published: form.published };
-    const now = new Date().toISOString();
     try {
+      const tags = form.tags.split(',').map(t => t.trim()).filter(Boolean);
+      let imageUrl = form.imageUrl;
+
+      if (imgFile) {
+        const fd = new FormData(); fd.append('image', imgFile);
+        const up = await fetch(`${AUTH}/upload-image`, { method: 'POST', body: fd });
+        if (!up.ok) throw new Error('Erreur lors de l\'upload de l\'image');
+        const upData = await up.json();
+        imageUrl = upData.imageUrl;
+      }
+
+      const payload = { title: form.title, excerpt: form.excerpt, content: form.content, tags, imageUrl, published: form.published };
+      const now = new Date().toISOString();
+      
       if (editing) {
         await fetch(`${API}/articles/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, updatedAt: now }) });
         setSuccess('Article mis à jour.');
@@ -171,6 +193,25 @@ export default function DashboardArticlesPage() {
                 <label className="form-label">Titre *</label>
                 <input className="form-input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required placeholder="Titre de l'article" />
               </div>
+              <div className="form-group">
+                <label className="form-label">Image de couverture</label>
+                <div className="upload-zone" onClick={() => document.getElementById('img-input')?.click()}>
+                  <div className="upload-zone-icon">
+                    <Upload size={24} />
+                  </div>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    {imgFile ? imgFile.name : (form.imageUrl ? 'Changer l\'image' : 'Cliquez pour sélectionner une image')}
+                  </p>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>JPG, PNG · Max 5 Mo</p>
+                </div>
+                <input id="img-input" type="file" accept="image/*" style={{ display: 'none' }} onChange={e => setImgFile(e.target.files?.[0] || null)} />
+              </div>
+              {!imgFile && (
+                <div className="form-group">
+                  <label className="form-label">URL de l'image (si déjà hébergée)</label>
+                  <input className="form-input" value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} placeholder="/uploads/mon-article.jpg" />
+                </div>
+              )}
               <div className="form-group">
                 <label className="form-label">Extrait *</label>
                 <textarea className="form-input" value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })} required rows={2} placeholder="Résumé court affiché dans la liste..." />

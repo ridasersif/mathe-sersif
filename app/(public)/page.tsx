@@ -109,6 +109,9 @@ export default async function HomePage() {
             <div className="grid-3">
               {featCourses.map((c: any) => (
                 <div key={c.id} className="card course-card">
+                  <div className="card-image">
+                    <img src={c.imageUrl || `https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800`} alt={c.title} />
+                  </div>
                   <div className="course-card-header">
                     <div className="course-icon">
                       {(() => {
@@ -125,7 +128,7 @@ export default async function HomePage() {
                   </div>
                   <div className="course-actions">
                     <a href={c.pdfUrl} download={c.pdfName} className="btn btn-primary btn-sm">
-                      <Download size={16} style={{ marginRight: 6 }} />
+                      <Download size={16} />
                       Télécharger
                     </a>
                     <Link href={`/cours/${c.id}`} className="btn btn-ghost btn-sm">
@@ -145,7 +148,7 @@ export default async function HomePage() {
           )}
           <div style={{ textAlign: 'center', marginTop: 40 }}>
             <Link href="/cours" className="btn btn-outline btn-lg">
-              Tous les cours <ArrowRight size={18} style={{ marginLeft: 8 }} />
+              Tous les cours <ArrowRight size={18} />
             </Link>
           </div>
         </div>
@@ -162,9 +165,12 @@ export default async function HomePage() {
           {featArticles.length > 0 ? (
             <div className="grid-3">
               {featArticles.map((a: any) => (
-                <Link key={a.id} href={`/articles/${a.id}`} className="card article-card" style={{ display: 'block' }}>
-                  <p className="article-card-date">
-                    <Calendar size={12} style={{ marginRight: 6, verticalAlign: 'middle' }} />
+                <Link key={a.id} href={`/articles/${a.id}`} className="card article-card" style={{ display: 'flex' }}>
+                  <div className="card-image">
+                    <img src={a.imageUrl || `https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800`} alt={a.title} />
+                  </div>
+                  <p className="article-card-date" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Calendar size={14} />
                     {new Date(a.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                   <h3 className="article-card-title">{a.title}</h3>
@@ -185,7 +191,7 @@ export default async function HomePage() {
           )}
           <div style={{ textAlign: 'center', marginTop: 40 }}>
             <Link href="/articles" className="btn btn-outline btn-lg">
-              Tous les articles <ArrowRight size={18} style={{ marginLeft: 8 }} />
+              Tous les articles <ArrowRight size={18} />
             </Link>
           </div>
         </div>
