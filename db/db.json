@@ -65,6 +65,17 @@
       "pdfName": "theorie-des-groupes.pdf",
       "createdAt": "2024-11-01T08:00:00Z",
       "updatedAt": "2024-11-01T08:00:00Z"
+    },
+    {
+      "title": "Voluptatem et et id",
+      "description": "Enim voluptatem sap",
+      "category": "Géométrie",
+      "level": "Licence 2",
+      "pdfUrl": "/uploads/1778189136705-739307302-ridasersifcvFR.pdf",
+      "pdfName": "ridasersifcvFR.pdf",
+      "createdAt": "2026-05-07T21:25:36.720Z",
+      "updatedAt": "2026-05-07T21:25:36.720Z",
+      "id": "2tF9MRXU5us"
     }
   ],
   "articles": [
@@ -73,17 +84,25 @@
       "title": "L'Importance des Mathématiques dans l'Intelligence Artificielle",
       "excerpt": "Exploration du rôle fondamental de l'algèbre linéaire, du calcul et des probabilités dans les algorithmes d'apprentissage automatique modernes.",
       "content": "# L'Importance des Mathématiques dans l'Intelligence Artificielle\n\nL'intelligence artificielle repose sur des fondements mathématiques solides. Sans une compréhension profonde de l'algèbre linéaire, du calcul différentiel et des probabilités, il est impossible de saisir pleinement le fonctionnement des algorithmes modernes.\n\n## Algèbre Linéaire\n\nLes réseaux de neurones sont essentiellement des compositions de transformations linéaires. Les matrices de poids, les opérations de convolution et la rétropropagation du gradient sont tous des concepts issus directement de l'algèbre linéaire.\n\n## Calcul Différentiel\n\nL'optimisation, au cœur de l'apprentissage automatique, repose sur le gradient. La descente de gradient et ses variantes (Adam, RMSProp) utilisent les dérivées partielles pour minimiser les fonctions de perte.\n\n## Probabilités et Statistiques\n\nLes modèles probabilistes, comme les réseaux bayésiens et les modèles de Markov cachés, formalisent l'incertitude. Comprendre les distributions de probabilité est essentiel pour interpréter les prédictions des modèles.\n\n## Conclusion\n\nLes mathématiques ne sont pas simplement un outil pour l'IA — elles en sont le langage fondamental.",
-      "tags": ["IA", "Algèbre", "Probabilités"],
+      "tags": [
+        "IA",
+        "Algèbre",
+        "Probabilités"
+      ],
       "published": true,
       "createdAt": "2024-11-15T10:00:00Z",
-      "updatedAt": "2024-11-15T10:00:00Z"
+      "updatedAt": "2026-05-07T21:25:03.498Z"
     },
     {
       "id": "2",
       "title": "Introduction à la Topologie Algébrique",
       "excerpt": "Une présentation accessible des concepts de base en topologie algébrique, des espaces topologiques aux groupes fondamentaux.",
       "content": "# Introduction à la Topologie Algébrique\n\nLa topologie algébrique est l'une des branches les plus fascinantes des mathématiques modernes. Elle établit un pont entre la géométrie et l'algèbre, permettant d'étudier les propriétés qualitatives des espaces topologiques.\n\n## Espaces Topologiques\n\nUn espace topologique est un ensemble muni d'une collection d'ouverts satisfaisant certains axiomes. Cette abstraction permet de généraliser les notions de continuité et de convergence bien au-delà des espaces métriques.\n\n## Homotopie\n\nDeux chemins sont homotopes s'ils peuvent être continûment déformés l'un en l'autre. Cette notion capture l'idée intuitive de « même forme ».\n\n## Groupe Fondamental\n\nLe groupe fondamental π₁(X, x₀) d'un espace X en un point de base x₀ capture les informations sur les « trous » unidimensionnels de l'espace. Pour un cercle, ce groupe est ℤ.\n\n## Applications\n\nLa topologie algébrique trouve des applications en physique théorique, en science des données et même en robotique.",
-      "tags": ["Topologie", "Algèbre", "Recherche"],
+      "tags": [
+        "Topologie",
+        "Algèbre",
+        "Recherche"
+      ],
       "published": true,
       "createdAt": "2024-10-20T09:00:00Z",
       "updatedAt": "2024-10-20T09:00:00Z"
@@ -93,15 +112,79 @@
       "title": "Méthodes Numériques pour les Équations Différentielles",
       "excerpt": "Revue des principales méthodes numériques utilisées pour approximer les solutions d'équations différentielles ordinaires et aux dérivées partielles.",
       "content": "# Méthodes Numériques pour les Équations Différentielles\n\nLorsque les solutions analytiques sont inaccessibles, les méthodes numériques constituent un outil indispensable pour les mathématiciens et les ingénieurs.\n\n## Méthode d'Euler\n\nLa méthode d'Euler est la plus simple des méthodes numériques. Elle consiste à approximer la solution en suivant la direction du champ de vecteurs pas à pas.\n\n## Méthode de Runge-Kutta\n\nLes méthodes de Runge-Kutta, notamment la méthode d'ordre 4 (RK4), offrent une précision bien supérieure à celle d'Euler pour un coût computationnel modéré.\n\n## Méthodes Implicites\n\nPour les équations raides (stiff equations), les méthodes implicites comme la méthode de Crank-Nicolson sont préférables car elles offrent une meilleure stabilité numérique.\n\n## Perspectives\n\nLes avancées en calcul scientifique et en apprentissage automatique ouvrent de nouvelles voies pour la résolution numérique des équations différentielles.",
-      "tags": ["Analyse Numérique", "EDO", "Méthodes"],
+      "tags": [
+        "Analyse Numérique",
+        "EDO",
+        "Méthodes"
+      ],
       "published": true,
       "createdAt": "2024-09-25T11:00:00Z",
       "updatedAt": "2024-09-25T11:00:00Z"
     }
   ],
-  "admin": {
+  "users": [
+    {
+      "id": "1",
+      "username": "rachidsersif",
+      "email": "rachidsersif@gmail.com",
+      "password": "$2b$10$D8GjvZewpsHodI21nMgM/eAfkBHOlaYnhOx..1fvclURzx2q4W3kC",
+      "role": "admin"
+    }
+  ],
+  "profile": {
     "id": 1,
-    "username": "admin",
-    "password": "$2b$10$rGjmHVAiZKh3p9Fq3xQu9.KZRxFhBqDjW3Sc6GjFjVxLZoQGBaLzy"
-  }
+    "userId": 1,
+    "firstName": "rachid ",
+    "lastName": "sersif",
+    "fullName": "Sersif Rachid ",
+    "title": "Professeur de Mathématiques",
+    "email": "k.benali@um5.ac.ma",
+    "phone": "+212 6 12 34 56 78",
+    "photo": "/uploads/profile-1778189061240.png",
+    "bio": "Enseignant-chercheur en mathématiques pures et appliquées, avec plus de 20 ans d'expérience dans l'enseignement supérieur et la recherche scientifique.",
+    "bioLong": "Né à Rabat en 1975, le Professeur Karim Benali est titulaire d'un doctorat en mathématiques pures de l'Université Paris VI (Sorbonne). Il est actuellement professeur habilité au département de mathématiques de la Faculté des Sciences de Rabat, Université Mohammed V.\n\nSes recherches portent principalement sur l'analyse fonctionnelle, les équations aux dérivées partielles et la topologie algébrique. Il a publié plus de 30 articles dans des revues mathématiques internationales indexées.\n\nEn parallèle de ses activités de recherche, il s'engage activement dans la pédagogie mathématique et partage librement ses cours avec ses étudiants et la communauté scientifique marocaine.",
+    "institution": "Université Mohammed V",
+    "faculty": "Faculté des Sciences de Rabat",
+    "department": "Département de Mathématiques",
+    "location": "Rabat, Maroc",
+    "specialties": [
+      "Analyse Fonctionnelle",
+      "Topologie Algébrique",
+      "Équations aux Dérivées Partielles",
+      "Théorie des Opérateurs",
+      "Mathématiques Appliquées",
+      "Méthodes Numériques"
+    ],
+    "stats": {
+      "yearsOfExperience": 20,
+      "publications": 30,
+      "courses": 6,
+      "students": 500
+    },
+    "education": [
+      {
+        "year": "2003",
+        "degree": "Doctorat en Mathématiques Pures",
+        "institution": "Université Paris VI (Sorbonne)"
+      },
+      {
+        "year": "1999",
+        "degree": "Master en Analyse Fonctionnelle",
+        "institution": "Université Mohammed V, Rabat"
+      },
+      {
+        "year": "1997",
+        "degree": "Licence en Mathématiques",
+        "institution": "Université Mohammed V, Rabat"
+      }
+    ],
+    "socialLinks": {
+      "researchGate": "https://www.researchgate.net",
+      "googleScholar": "https://scholar.google.com",
+      "linkedin": "",
+      "twitter": ""
+    },
+    "updatedAt": "2026-05-07T21:44:42.861Z"
+  },
+  "$schema": "./node_modules/json-server/schema.json"
 }

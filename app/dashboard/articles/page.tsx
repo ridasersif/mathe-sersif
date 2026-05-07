@@ -2,6 +2,17 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import type { Article } from '@/lib/api';
+import { 
+  Plus, 
+  Pencil, 
+  Trash2, 
+  FileText, 
+  X, 
+  CheckCircle2, 
+  AlertCircle,
+  Newspaper,
+  Calendar
+} from 'lucide-react';
 
 const API = 'http://localhost:3001';
 const empty = { title: '', excerpt: '', content: '', tags: '', published: false };
@@ -72,10 +83,16 @@ export default function DashboardArticlesPage() {
             {articles.filter(a => a.published).length} publiés · {articles.filter(a => !a.published).length} brouillons
           </p>
         </div>
-        <button onClick={openAdd} className="btn btn-primary">+ Nouvel article</button>
+        <button onClick={openAdd} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Plus size={18} /> Nouvel article
+        </button>
       </div>
 
-      {success && <div className="alert alert-success">{success}</div>}
+      {success && (
+        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <CheckCircle2 size={16} /> {success}
+        </div>
+      )}
 
       {articles.length > 0 ? (
         <div className="table-wrap">
@@ -100,15 +117,25 @@ export default function DashboardArticlesPage() {
                     </div>
                   </td>
                   <td>
-                    <button onClick={() => togglePublish(a)} className={`btn btn-sm ${a.published ? 'btn-outline' : 'btn-ghost'}`} title="Cliquer pour changer le statut">
-                      {a.published ? '✅ Publié' : '📝 Brouillon'}
+                    <button 
+                      onClick={() => togglePublish(a)} 
+                      className={`btn btn-sm ${a.published ? 'btn-outline' : 'btn-ghost'}`} 
+                      title="Cliquer pour changer le statut"
+                      style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                    >
+                      {a.published ? <CheckCircle2 size={14} /> : <FileText size={14} />}
+                      {a.published ? 'Publié' : 'Brouillon'}
                     </button>
                   </td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{new Date(a.createdAt).toLocaleDateString('fr-FR')}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button onClick={() => openEdit(a)} className="btn btn-ghost btn-sm">✏️ Modifier</button>
-                      <button onClick={() => handleDelete(a.id)} className="btn btn-danger btn-sm">🗑</button>
+                      <button onClick={() => openEdit(a)} className="btn btn-ghost btn-sm" title="Modifier">
+                        <Pencil size={14} />
+                      </button>
+                      <button onClick={() => handleDelete(a.id)} className="btn btn-danger btn-sm" title="Supprimer">
+                        <Trash2 size={14} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -118,7 +145,9 @@ export default function DashboardArticlesPage() {
         </div>
       ) : (
         <div className="empty-state">
-          <div className="empty-state-icon">✍️</div>
+          <div className="empty-state-icon">
+            <Newspaper size={48} strokeWidth={1} />
+          </div>
           <p className="empty-state-title">Aucun article</p>
           <p className="empty-state-text">Cliquez sur « Nouvel article » pour commencer à écrire.</p>
         </div>
@@ -130,9 +159,13 @@ export default function DashboardArticlesPage() {
           <div className="modal" style={{ maxWidth: 680 }}>
             <div className="modal-header">
               <h2 className="modal-title">{editing ? 'Modifier l\'article' : 'Nouvel article'}</h2>
-              <button className="modal-close" onClick={closeModal}>✕</button>
+              <button className="modal-close" onClick={closeModal}><X size={20} /></button>
             </div>
-            {error && <div className="alert alert-error">{error}</div>}
+            {error && (
+              <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <AlertCircle size={16} /> {error}
+              </div>
+            )}
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label className="form-label">Titre *</label>
@@ -158,7 +191,8 @@ export default function DashboardArticlesPage() {
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
                 <button type="button" onClick={closeModal} className="btn btn-ghost">Annuler</button>
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button type="submit" className="btn btn-primary" disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {loading ? <span className="spinner" style={{ width: 16, height: 16 }} /> : <CheckCircle2 size={18} />}
                   {loading ? 'Enregistrement…' : (editing ? 'Mettre à jour' : 'Créer l\'article')}
                 </button>
               </div>

@@ -1,15 +1,30 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCourses } from '@/lib/api';
+import { 
+  Variable, 
+  Sigma, 
+  Dices, 
+  Orbit, 
+  Triangle, 
+  BookOpen, 
+  Download, 
+  Eye, 
+  Search 
+} from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Cours de Mathématiques',
   description: 'Accédez librement à tous les cours de mathématiques en PDF — Analyse, Algèbre, Probabilités, Topologie et plus.',
 };
 
-const categoryIcons: Record<string, string> = {
-  'Analyse': '∫', 'Algèbre': '⊕', 'Probabilités': '⚀',
-  'Topologie': '⊙', 'Géométrie': '△', 'default': '∑',
+const categoryIcons: Record<string, any> = {
+  'Analyse': Variable, 
+  'Algèbre': Sigma, 
+  'Probabilités': Dices,
+  'Topologie': Orbit, 
+  'Géométrie': Triangle, 
+  'default': BookOpen,
 };
 
 const categories = ['Tous', 'Analyse', 'Algèbre', 'Probabilités', 'Topologie', 'Géométrie'];
@@ -56,7 +71,10 @@ export default async function CoursPage({ searchParams }: { searchParams: Promis
                 <div key={c.id} className="card course-card">
                   <div className="course-card-header">
                     <div className="course-icon">
-                      {categoryIcons[c.category] || categoryIcons.default}
+                      {(() => {
+                        const Icon = categoryIcons[c.category] || categoryIcons.default;
+                        return <Icon size={24} />;
+                      })()}
                     </div>
                     <span className="tag tag-gold">{c.level}</span>
                   </div>
@@ -69,17 +87,21 @@ export default async function CoursPage({ searchParams }: { searchParams: Promis
                     </span>
                   </div>
                   <div className="course-actions">
-                    <a href={c.pdfUrl} download={c.pdfName} className="btn btn-primary btn-sm">
-                      ⬇ Télécharger PDF
+                    <a href={c.pdfUrl} download={c.pdfName} className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Download size={14} /> Télécharger
                     </a>
-                    <Link href={`/cours/${c.id}`} className="btn btn-ghost btn-sm">Voir</Link>
+                    <Link href={`/cours/${c.id}`} className="btn btn-ghost btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Eye size={14} /> Voir
+                    </Link>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="empty-state">
-              <div className="empty-state-icon">📂</div>
+              <div className="empty-state-icon">
+                <Search size={48} strokeWidth={1} />
+              </div>
               <p className="empty-state-title">Aucun cours trouvé</p>
               <p className="empty-state-text">Essayez une autre catégorie.</p>
               <Link href="/cours" className="btn btn-outline" style={{ marginTop: 16 }}>Voir tous les cours</Link>

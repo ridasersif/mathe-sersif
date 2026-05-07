@@ -2,6 +2,17 @@
 
 import { useState, useEffect, FormEvent } from 'react';
 import type { Course } from '@/lib/api';
+import { 
+  Plus, 
+  Pencil, 
+  Trash2, 
+  FileText, 
+  X, 
+  Upload, 
+  CheckCircle2, 
+  AlertCircle,
+  BookOpen
+} from 'lucide-react';
 
 const API = 'http://localhost:3001';
 const AUTH = 'http://localhost:3002';
@@ -77,10 +88,16 @@ export default function DashboardCoursPage() {
           <h1 className="title-md">Gestion des Cours</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: 4 }}>{courses.length} cours au total</p>
         </div>
-        <button onClick={openAdd} className="btn btn-primary">+ Ajouter un cours</button>
+        <button onClick={openAdd} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Plus size={18} /> Ajouter un cours
+        </button>
       </div>
 
-      {success && <div className="alert alert-success">{success}</div>}
+      {success && (
+        <div className="alert alert-success" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <CheckCircle2 size={16} /> {success}
+        </div>
+      )}
 
       {courses.length > 0 ? (
         <div className="table-wrap">
@@ -103,14 +120,20 @@ export default function DashboardCoursPage() {
                   <td><span className="tag tag-gold">{c.level}</span></td>
                   <td>
                     {c.pdfUrl ? (
-                      <a href={c.pdfUrl} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">📄 PDF</a>
+                      <a href={c.pdfUrl} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <FileText size={14} /> PDF
+                      </a>
                     ) : <span style={{ color: 'var(--text-muted)' }}>—</span>}
                   </td>
                   <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button onClick={() => openEdit(c)} className="btn btn-ghost btn-sm">✏️ Modifier</button>
-                      <button onClick={() => handleDelete(c.id)} className="btn btn-danger btn-sm">🗑 Supprimer</button>
+                      <button onClick={() => openEdit(c)} className="btn btn-ghost btn-sm" title="Modifier">
+                        <Pencil size={14} />
+                      </button>
+                      <button onClick={() => handleDelete(c.id)} className="btn btn-danger btn-sm" title="Supprimer">
+                        <Trash2 size={14} />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -120,7 +143,9 @@ export default function DashboardCoursPage() {
         </div>
       ) : (
         <div className="empty-state">
-          <div className="empty-state-icon">📚</div>
+          <div className="empty-state-icon">
+            <BookOpen size={48} strokeWidth={1} />
+          </div>
           <p className="empty-state-title">Aucun cours</p>
           <p className="empty-state-text">Cliquez sur « Ajouter un cours » pour commencer.</p>
         </div>
@@ -132,9 +157,13 @@ export default function DashboardCoursPage() {
           <div className="modal">
             <div className="modal-header">
               <h2 className="modal-title">{editing ? 'Modifier le cours' : 'Ajouter un cours'}</h2>
-              <button className="modal-close" onClick={closeModal}>✕</button>
+              <button className="modal-close" onClick={closeModal}><X size={20} /></button>
             </div>
-            {error && <div className="alert alert-error">{error}</div>}
+            {error && (
+              <div className="alert alert-error" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <AlertCircle size={16} /> {error}
+              </div>
+            )}
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label className="form-label">Titre *</label>
@@ -161,7 +190,9 @@ export default function DashboardCoursPage() {
               <div className="form-group">
                 <label className="form-label">Fichier PDF</label>
                 <div className="upload-zone" onClick={() => document.getElementById('pdf-input')?.click()}>
-                  <div className="upload-zone-icon">📄</div>
+                  <div className="upload-zone-icon">
+                    <Upload size={24} />
+                  </div>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                     {pdfFile ? pdfFile.name : (editing?.pdfName || 'Cliquez pour sélectionner un PDF')}
                   </p>
@@ -177,7 +208,8 @@ export default function DashboardCoursPage() {
               )}
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
                 <button type="button" onClick={closeModal} className="btn btn-ghost">Annuler</button>
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button type="submit" className="btn btn-primary" disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {loading ? <span className="spinner" style={{ width: 16, height: 16 }} /> : <CheckCircle2 size={18} />}
                   {loading ? 'Enregistrement…' : (editing ? 'Mettre à jour' : 'Ajouter')}
                 </button>
               </div>

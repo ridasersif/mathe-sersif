@@ -3,10 +3,22 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { 
+  LayoutDashboard, 
+  BookOpen, 
+  FileText, 
+  User, 
+  ExternalLink, 
+  LogOut,
+  BookMarked,
+  Newspaper
+} from 'lucide-react';
+
 const navItems = [
-  { href: '/dashboard', label: 'Vue d\'ensemble', icon: '📊' },
-  { href: '/dashboard/cours', label: 'Cours', icon: '📚' },
-  { href: '/dashboard/articles', label: 'Articles', icon: '✍️' },
+  { href: '/dashboard', label: 'Vue d\'ensemble', icon: LayoutDashboard },
+  { href: '/dashboard/cours', label: 'Cours', icon: BookMarked },
+  { href: '/dashboard/articles', label: 'Articles', icon: Newspaper },
+  { href: '/dashboard/profile', label: 'Mon Profil', icon: User },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -31,8 +43,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          <Link href="/" target="_blank" className="btn btn-ghost btn-sm">🌐 Voir le site</Link>
-          <button onClick={handleLogout} className="btn btn-danger btn-sm">Déconnexion</button>
+          <Link href="/" target="_blank" className="btn btn-ghost btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ExternalLink size={14} /> Voir le site
+          </Link>
+          <button onClick={handleLogout} className="btn btn-danger btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <LogOut size={14} /> Déconnexion
+          </button>
         </div>
       </header>
 
@@ -42,13 +58,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <p style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', padding: '0 10px', marginBottom: 8 }}>Navigation</p>
           {navItems.map((item) => {
             const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
+            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 className={`sidebar-link ${isActive ? 'active' : ''}`}
               >
-                <span>{item.icon}</span>
+                <Icon size={18} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -56,15 +73,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           <p style={{ fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', padding: '0 10px', marginBottom: 8, marginTop: 24 }}>Site public</p>
           {[
-            { href: '/cours', label: 'Cours publiés', icon: '📖' },
-            { href: '/articles', label: 'Articles publiés', icon: '📰' },
-            { href: '/about', label: 'À propos', icon: '👤' },
-          ].map((item) => (
-            <Link key={item.href} href={item.href} target="_blank" className="sidebar-link">
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          ))}
+            { href: '/cours', label: 'Cours publiés', icon: BookOpen },
+            { href: '/articles', label: 'Articles publiés', icon: FileText },
+            { href: '/about', label: 'À propos', icon: User },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.href} href={item.href} target="_blank" className="sidebar-link">
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
         </aside>
 
         {/* Main */}

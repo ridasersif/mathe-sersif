@@ -116,3 +116,80 @@ export async function uploadPDF(file: File): Promise<{ pdfUrl: string; pdfName: 
   if (!res.ok) throw new Error('Erreur lors de l\'upload du PDF');
   return res.json();
 }
+
+// ─── Profile ──────────────────────────────────────────────────────────────────
+export interface Profile {
+  id: number;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  title: string;
+  email: string;
+  phone: string;
+  photo: string;
+  bio: string;
+  bioLong: string;
+  institution: string;
+  faculty: string;
+  department: string;
+  location: string;
+  specialties: string[];
+  stats: {
+    yearsOfExperience: number;
+    publications: number;
+    courses: number;
+    students: number;
+  };
+  education: Array<{
+    year: string;
+    degree: string;
+    institution: string;
+  }>;
+  socialLinks: {
+    researchGate: string;
+    googleScholar: string;
+    linkedin: string;
+    twitter: string;
+  };
+  updatedAt: string;
+}
+
+export async function getProfile(): Promise<Profile> {
+  const res = await fetch(`${AUTH_BASE}/auth/profile`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Erreur lors du chargement du profil');
+  return res.json();
+}
+
+export async function updateProfile(data: Partial<Profile>): Promise<Profile> {
+  const res = await fetch(`${AUTH_BASE}/auth/profile`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error('Erreur lors de la mise à jour du profil');
+  return res.json();
+}
+
+export async function uploadProfilePhoto(file: File): Promise<{ photoUrl: string }> {
+  const formData = new FormData();
+  formData.append('photo', file);
+  const res = await fetch(`${AUTH_BASE}/auth/upload-photo`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) throw new Error('Erreur lors de l\'upload de la photo');
+  return res.json();
+}
+
+export async function changePassword(oldPassword: string, newPassword: string): Promise<void> {
+  const res = await fetch(`${AUTH_BASE}/auth/change-password`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ oldPassword, newPassword }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || 'Erreur lors du changement de mot de passe');
+  }
+}

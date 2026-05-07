@@ -1,20 +1,50 @@
 import Link from 'next/link';
-import { getCourses } from '@/lib/api';
-import { getArticles } from '@/lib/api';
+import { getCourses, getArticles, getProfile } from '@/lib/api';
+import { 
+  GraduationCap, 
+  BookOpen, 
+  FileText, 
+  Download, 
+  ArrowRight, 
+  Mail, 
+  Award, 
+  Calendar,
+  Users,
+  Sigma,
+  Variable,
+  Dices,
+  Orbit,
+  Triangle
+} from 'lucide-react';
 
-const categoryIcons: Record<string, string> = {
-  'Analyse': '∫', 'Algèbre': '⊕', 'Probabilités': '🎲',
-  'Topologie': '⊙', 'Géométrie': '△', 'default': '∑',
+const categoryIcons: Record<string, any> = {
+  'Analyse': Variable,
+  'Algèbre': Sigma,
+  'Probabilités': Dices,
+  'Topologie': Orbit,
+  'Géométrie': Triangle,
+  'default': BookOpen,
 };
 
 export default async function HomePage() {
   let courses = [];
   let articles = [];
+  let profile: any = null;
   try {
-    [courses, articles] = await Promise.all([getCourses(), getArticles(true)]);
+    const results = await Promise.all([getCourses(), getArticles(true), getProfile()]);
+    courses = results[0];
+    articles = results[1];
+    profile = results[2];
   } catch {}
+
   const featCourses = courses.slice(0, 3);
   const featArticles = articles.slice(0, 3);
+
+  const stats = [
+    { label: 'Cours disponibles', value: profile?.stats.courses || courses.length, icon: BookOpen, color: 'var(--accent-blue)' },
+    { label: 'Publications', value: profile?.stats.publications || articles.length, icon: FileText, color: 'var(--accent-gold)' },
+    { label: "Années d'expérience", value: profile?.stats.yearsOfExperience || 20, icon: Calendar, color: '#4ade80' },
+  ];
 
   return (
     <>
@@ -24,42 +54,43 @@ export default async function HomePage() {
           <div className="hero-grid">
             <div className="hero-content animate-fadeUp">
               <div className="hero-badge">
-                <span>🎓</span>
-                <span>Professeur de Mathématiques</span>
+                <GraduationCap size={16} />
+                <span>{profile?.title || 'Professeur de Mathématiques'}</span>
               </div>
               <h1 className="title-xl" style={{ marginBottom: 16 }}>
                 Professeur{' '}
-                <span className="gold-text">Karim Benali</span>
+                <span className="gold-text">{profile?.fullName || 'Karim Benali'}</span>
               </h1>
               <p className="subtitle" style={{ marginBottom: 32 }}>
-                Bienvenue sur ma plateforme académique. Explorez mes cours, 
-                articles de recherche et publications en mathématiques pures et appliquées.
+                {profile?.bio || "Bienvenue sur ma plateforme académique. Explorez mes cours, articles de recherche et publications en mathématiques pures et appliquées."}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <Link href="/cours" className="btn btn-primary btn-lg">
-                  📚 Voir les cours
+                  <BookOpen size={20} style={{ marginRight: 8 }} />
+                  Voir les cours
                 </Link>
                 <Link href="/about" className="btn btn-ghost btn-lg">
                   En savoir plus
                 </Link>
               </div>
               <div className="hero-stats">
-                <div>
-                  <div className="hero-stat-value gradient-text">{courses.length || '15'}+</div>
-                  <div className="hero-stat-label">Cours disponibles</div>
-                </div>
-                <div>
-                  <div className="hero-stat-value gradient-text">{articles.length || '30'}+</div>
-                  <div className="hero-stat-label">Publications</div>
-                </div>
-                <div>
-                  <div className="hero-stat-value gradient-text">20+</div>
-                  <div className="hero-stat-label">Années d'expérience</div>
-                </div>
+                {stats.map((s, i) => (
+                  <div key={i}>
+                    <div className="hero-stat-value gradient-text">{s.value}+</div>
+                    <div className="hero-stat-label" style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
+                      <s.icon size={14} /> {s.label}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
             <div className="hero-avatar-wrap">
-              <div className="hero-avatar">👨‍🏫</div>
+              <div className="hero-avatar" style={{ 
+                background: profile?.photo ? `url(http://localhost:3002${profile.photo}) center/cover` : 'var(--bg-secondary)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem'
+              }}>
+                {!profile?.photo && <Users size={80} strokeWidth={1} color="var(--accent-gold)" />}
+              </div>
             </div>
           </div>
         </div>
@@ -80,7 +111,10 @@ export default async function HomePage() {
                 <div key={c.id} className="card course-card">
                   <div className="course-card-header">
                     <div className="course-icon">
-                      {categoryIcons[c.category] || categoryIcons.default}
+                      {(() => {
+                        const Icon = categoryIcons[c.category] || categoryIcons.default;
+                        return <Icon size={24} />;
+                      })()}
                     </div>
                     <span className="tag tag-gold">{c.level}</span>
                   </div>
@@ -91,7 +125,8 @@ export default async function HomePage() {
                   </div>
                   <div className="course-actions">
                     <a href={c.pdfUrl} download={c.pdfName} className="btn btn-primary btn-sm">
-                      ⬇ Télécharger
+                      <Download size={16} style={{ marginRight: 6 }} />
+                      Télécharger
                     </a>
                     <Link href={`/cours/${c.id}`} className="btn btn-ghost btn-sm">
                       Détails
@@ -102,12 +137,16 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="empty-state">
-              <div className="empty-state-icon">📂</div>
+              <div className="empty-state-icon">
+                <BookOpen size={48} strokeWidth={1} />
+              </div>
               <p className="empty-state-title">Aucun cours disponible</p>
             </div>
           )}
           <div style={{ textAlign: 'center', marginTop: 40 }}>
-            <Link href="/cours" className="btn btn-outline btn-lg">Tous les cours →</Link>
+            <Link href="/cours" className="btn btn-outline btn-lg">
+              Tous les cours <ArrowRight size={18} style={{ marginLeft: 8 }} />
+            </Link>
           </div>
         </div>
       </section>
@@ -125,6 +164,7 @@ export default async function HomePage() {
               {featArticles.map((a: any) => (
                 <Link key={a.id} href={`/articles/${a.id}`} className="card article-card" style={{ display: 'block' }}>
                   <p className="article-card-date">
+                    <Calendar size={12} style={{ marginRight: 6, verticalAlign: 'middle' }} />
                     {new Date(a.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                   <h3 className="article-card-title">{a.title}</h3>
@@ -137,12 +177,16 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="empty-state">
-              <div className="empty-state-icon">✍️</div>
+              <div className="empty-state-icon">
+                <FileText size={48} strokeWidth={1} />
+              </div>
               <p className="empty-state-title">Aucun article disponible</p>
             </div>
           )}
           <div style={{ textAlign: 'center', marginTop: 40 }}>
-            <Link href="/articles" className="btn btn-outline btn-lg">Tous les articles →</Link>
+            <Link href="/articles" className="btn btn-outline btn-lg">
+              Tous les articles <ArrowRight size={18} style={{ marginLeft: 8 }} />
+            </Link>
           </div>
         </div>
       </section>
@@ -155,7 +199,10 @@ export default async function HomePage() {
           <p className="subtitle" style={{ maxWidth: 500, margin: '0 auto 32px' }}>
             N'hésitez pas à me contacter pour toute question académique ou collaboration de recherche.
           </p>
-          <Link href="/about#contact" className="btn btn-gold btn-lg">✉️ Me contacter</Link>
+          <Link href="/about#contact" className="btn btn-gold btn-lg">
+            <Mail size={20} style={{ marginRight: 8 }} />
+            Me contacter
+          </Link>
         </div>
       </section>
     </>

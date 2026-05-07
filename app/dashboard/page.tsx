@@ -1,5 +1,13 @@
 import Link from 'next/link';
 import { getCourses, getArticles } from '@/lib/api';
+import { 
+  BookMarked, 
+  FileText, 
+  Newspaper, 
+  Globe,
+  Plus,
+  ArrowRight
+} from 'lucide-react';
 
 export default async function DashboardPage() {
   let courses = [], articles = [], publishedArticles = [];
@@ -9,10 +17,10 @@ export default async function DashboardPage() {
   } catch {}
 
   const stats = [
-    { value: courses.length, label: 'Cours publiés', icon: '📚', href: '/dashboard/cours', color: 'var(--accent-blue)' },
-    { value: articles.length, label: 'Articles au total', icon: '✍️', href: '/dashboard/articles', color: 'var(--accent-gold)' },
-    { value: publishedArticles.length, label: 'Articles publiés', icon: '📰', href: '/dashboard/articles', color: '#4ade80' },
-    { value: courses.length + publishedArticles.length, label: 'Ressources en ligne', icon: '🌐', href: '/', color: '#c084fc' },
+    { value: courses.length, label: 'Cours publiés', icon: BookMarked, href: '/dashboard/cours', color: 'var(--accent-blue)' },
+    { value: articles.length, label: 'Articles au total', icon: FileText, href: '/dashboard/articles', color: 'var(--accent-gold)' },
+    { value: publishedArticles.length, label: 'Articles publiés', icon: Newspaper, href: '/dashboard/articles', color: '#4ade80' },
+    { value: courses.length + publishedArticles.length, label: 'Ressources en ligne', icon: Globe, href: '/', color: '#c084fc' },
   ];
 
   const recentCourses = [...courses].sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).slice(0, 4);
@@ -28,24 +36,39 @@ export default async function DashboardPage() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <Link href="/dashboard/cours" className="btn btn-primary btn-sm">+ Nouveau cours</Link>
-          <Link href="/dashboard/articles" className="btn btn-outline btn-sm">+ Nouvel article</Link>
+          <Link href="/dashboard/cours" className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Plus size={16} /> Nouveau cours
+          </Link>
+          <Link href="/dashboard/articles" className="btn btn-outline btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Plus size={16} /> Nouvel article
+          </Link>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid-2" style={{ gap: 16, marginBottom: 32 }}>
-        {stats.map((s) => (
-          <Link key={s.label} href={s.href} className="card stat-card" style={{ textDecoration: 'none', display: 'block' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <div style={{ fontSize: '2.2rem', fontWeight: 700, fontFamily: 'Playfair Display, serif', color: s.color }}>{s.value}</div>
-                <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 4 }}>{s.label}</div>
+        {stats.map((s) => {
+          const Icon = s.icon;
+          return (
+            <Link key={s.label} href={s.href} className="card stat-card" style={{ textDecoration: 'none', display: 'block' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <div style={{ fontSize: '2.2rem', fontWeight: 700, fontFamily: 'Playfair Display, serif', color: s.color }}>{s.value}</div>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: 4 }}>{s.label}</div>
+                </div>
+                <div style={{ 
+                  width: 44, height: 44, borderRadius: 12, 
+                  background: 'var(--bg-secondary)', 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: s.color,
+                  border: '1px solid var(--border)'
+                }}>
+                  <Icon size={24} />
+                </div>
               </div>
-              <span style={{ fontSize: '1.8rem' }}>{s.icon}</span>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
 
       <div className="grid-2" style={{ gap: 24, alignItems: 'start' }}>
@@ -53,7 +76,9 @@ export default async function DashboardPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h2 style={{ fontSize: '1rem', fontWeight: 600 }}>Cours récents</h2>
-            <Link href="/dashboard/cours" className="btn btn-ghost btn-sm">Gérer →</Link>
+            <Link href="/dashboard/cours" className="btn btn-ghost btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              Gérer <ArrowRight size={14} />
+            </Link>
           </div>
           {recentCourses.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -76,7 +101,9 @@ export default async function DashboardPage() {
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h2 style={{ fontSize: '1rem', fontWeight: 600 }}>Articles récents</h2>
-            <Link href="/dashboard/articles" className="btn btn-ghost btn-sm">Gérer →</Link>
+            <Link href="/dashboard/articles" className="btn btn-ghost btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              Gérer <ArrowRight size={14} />
+            </Link>
           </div>
           {recentArticles.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

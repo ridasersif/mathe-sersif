@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
 const links = [
   { href: '/', label: 'Accueil' },
@@ -40,8 +41,9 @@ export default function Navbar() {
             className="btn btn-ghost btn-sm"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
+            style={{ padding: '6px' }}
           >
-            {open ? '✕' : '☰'}
+            {open ? <X size={20} /> : <Menu size={20} />}
           </button>
           {open && (
             <div className="navbar-mobile-menu">

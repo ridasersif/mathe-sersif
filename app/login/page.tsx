@@ -48,13 +48,13 @@ function LoginForm() {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label" htmlFor="username">Identifiant</label>
+            <label className="form-label" htmlFor="username">Identifiant (Nom d'utilisateur ou Email)</label>
             <input
               id="username"
               name="username"
               type="text"
               className="form-input"
-              placeholder="Votre identifiant"
+              placeholder="Votre nom d'utilisateur ou email"
               required
               autoComplete="username"
             />
