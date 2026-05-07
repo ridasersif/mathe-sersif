@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getCourses, getArticles, getProfile } from '@/lib/api';
+import { getCourses, getArticles, getProfile, type Course, type Article, type Profile } from '@/lib/api';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -27,9 +27,9 @@ const categoryIcons: Record<string, any> = {
 };
 
 export default async function HomePage() {
-  let courses = [];
-  let articles = [];
-  let profile: any = null;
+  let courses: Course[] = [];
+  let articles: Article[] = [];
+  let profile: Profile | null = null;
   try {
     const results = await Promise.all([getCourses(), getArticles(true), getProfile()]);
     courses = results[0];
@@ -41,9 +41,9 @@ export default async function HomePage() {
   const featArticles = articles.slice(0, 3);
 
   const stats = [
-    { label: 'Cours disponibles', value: profile?.stats.courses || courses.length, icon: BookOpen, color: 'var(--accent-blue)' },
-    { label: 'Publications', value: profile?.stats.publications || articles.length, icon: FileText, color: 'var(--accent-gold)' },
-    { label: "Années d'expérience", value: profile?.stats.yearsOfExperience || 20, icon: Calendar, color: '#4ade80' },
+    { label: 'Cours disponibles', value: profile?.stats?.courses || courses.length, icon: BookOpen, color: 'var(--accent-blue)' },
+    { label: 'Publications', value: profile?.stats?.publications || articles.length, icon: FileText, color: 'var(--accent-gold)' },
+    { label: "Années d'expérience", value: profile?.stats?.yearsOfExperience || 20, icon: Calendar, color: '#4ade80' },
   ];
 
   return (
@@ -107,7 +107,7 @@ export default async function HomePage() {
           </div>
           {featCourses.length > 0 ? (
             <div className="grid-3">
-              {featCourses.map((c: any) => (
+              {featCourses.map((c: Course) => (
                 <div key={c.id} className="card course-card">
                   <div className="card-image">
                     <img src={c.imageUrl || `https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800`} alt={c.title} />
@@ -164,7 +164,7 @@ export default async function HomePage() {
           </div>
           {featArticles.length > 0 ? (
             <div className="grid-3">
-              {featArticles.map((a: any) => (
+              {featArticles.map((a: Article) => (
                 <Link key={a.id} href={`/articles/${a.id}`} className="card article-card" style={{ display: 'flex' }}>
                   <div className="card-image">
                     <img src={a.imageUrl || `https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800`} alt={a.title} />

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getArticles } from '@/lib/api';
+import { getArticles, type Article } from '@/lib/api';
 import { Newspaper } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ArticlesPage() {
-  let articles = [];
+  let articles: Article[] = [];
   try { articles = await getArticles(true); } catch {}
 
   return (

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getProfile } from '@/lib/api';
+import { getProfile, type Profile } from '@/lib/api';
 import { 
   Users, 
   Mail, 
@@ -21,14 +21,13 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  let profile: any = null;
+  let profile: Profile | null = null;
   try {
     profile = await getProfile();
   } catch {}
 
-  const credentials = profile?.education || [];
-
-  const specialties = profile?.specialties || [];
+  const credentials: any[] = profile?.education || [];
+  const specialties: string[] = profile?.specialties || [];
 
   const publications = [
     { title: 'On the regularity of solutions for a class of nonlinear elliptic equations', journal: 'Journal of Mathematical Analysis', year: '2023' },

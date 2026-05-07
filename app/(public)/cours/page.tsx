@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getCourses } from '@/lib/api';
+import { getCourses, type Course } from '@/lib/api';
 import SearchInput from '@/components/SearchInput';
 import { 
   Variable, 
@@ -41,19 +41,19 @@ export default async function CoursPage({
   const currentPage = parseInt(page || '1');
   const pageSize = 6;
 
-  let courses = [];
+  let courses: Course[] = [];
   try { courses = await getCourses(); } catch {}
 
   // 1. Smart Filtering
   let filtered = [...courses];
   
   if (cat && cat !== 'Tous') {
-    filtered = filtered.filter((c: any) => c.category === cat);
+    filtered = filtered.filter((c: Course) => c.category === cat);
   }
 
   if (q) {
     const query = q.toLowerCase();
-    filtered = filtered.filter((c: any) => 
+    filtered = filtered.filter((c: Course) => 
       c.title.toLowerCase().includes(query) ||
       c.description.toLowerCase().includes(query) ||
       c.category.toLowerCase().includes(query) ||
@@ -103,7 +103,7 @@ export default async function CoursPage({
           {paginated.length > 0 ? (
             <>
               <div className="grid-3">
-                {paginated.map((c: any) => (
+                {paginated.map((c: Course) => (
                   <div key={c.id} className="card course-card animate-fadeUp">
                     <div className="card-image">
                       <img src={c.imageUrl || `https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800`} alt={c.title} />

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getCourses, getArticles, getProfile } from '@/lib/api';
+import { getCourses, getArticles, getProfile, type Course, type Article, type Profile } from '@/lib/api';
 import { 
   BookMarked, 
   FileText, 
@@ -10,13 +10,13 @@ import {
 } from 'lucide-react';
 
 export default async function DashboardPage() {
-  let courses = [], articles = [], publishedArticles = [], profile = null;
+  let courses: Course[] = [], articles: Article[] = [], publishedArticles: Article[] = [], profile: Profile | null = null;
   try {
     const results = await Promise.all([getCourses(), getArticles(), getProfile()]);
-    courses = results[0];
-    articles = results[1];
-    profile = results[2];
-    publishedArticles = articles.filter((a: any) => a.published);
+    courses = results[0] as Course[];
+    articles = results[1] as Article[];
+    profile = results[2] as Profile;
+    publishedArticles = articles.filter((a: Article) => a.published);
   } catch {}
 
   const stats = [
