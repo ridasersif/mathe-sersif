@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getCourses, getArticles } from '@/lib/api';
+import { getCourses, getArticles, getProfile } from '@/lib/api';
 import { 
   BookMarked, 
   FileText, 
@@ -10,9 +10,12 @@ import {
 } from 'lucide-react';
 
 export default async function DashboardPage() {
-  let courses = [], articles = [], publishedArticles = [];
+  let courses = [], articles = [], publishedArticles = [], profile = null;
   try {
-    [courses, articles] = await Promise.all([getCourses(), getArticles()]);
+    const results = await Promise.all([getCourses(), getArticles(), getProfile()]);
+    courses = results[0];
+    articles = results[1];
+    profile = results[2];
     publishedArticles = articles.filter((a: any) => a.published);
   } catch {}
 
@@ -32,7 +35,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="title-md">Vue d'ensemble</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: 4 }}>
-            Bienvenue, Professeur Benali. Gérez vos cours et articles depuis ce tableau de bord.
+            Bienvenue, {profile?.fullName ? `Professeur ${profile.lastName}` : 'Professeur'}. Gérez vos cours et articles depuis ce tableau de bord.
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>

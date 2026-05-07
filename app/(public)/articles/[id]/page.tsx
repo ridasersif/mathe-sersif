@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getArticle } from '@/lib/api';
+import { getArticle, getProfile } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
@@ -28,8 +28,12 @@ function renderContent(content: string): string {
 
 export default async function ArticleDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  let article;
-  try { article = await getArticle(id); } catch { notFound(); }
+  let article, profile;
+  try { 
+    [article, profile] = await Promise.all([getArticle(id), getProfile()]); 
+  } catch { 
+    try { article = await getArticle(id); } catch { notFound(); }
+  }
 
   return (
     <>
@@ -41,7 +45,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
           </div>
           <h1 className="title-lg" style={{ marginBottom: 14, lineHeight: 1.3 }}>{article.title}</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-            <span>👨‍🏫 Prof. Karim Benali</span>
+            <span>👨‍🏫 {profile?.fullName ? `Prof. ${profile.fullName}` : 'Professeur'}</span>
             <span>·</span>
             <span>{new Date(article.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
           </div>
@@ -58,14 +62,20 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
 
           {/* Author Card */}
           <div className="card" style={{ marginTop: 48, maxWidth: 720, margin: '48px auto 0', display: 'flex', gap: 20, alignItems: 'center' }}>
-            <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--gradient-accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', flexShrink: 0 }}>
-              👨‍🏫
+            <div style={{ 
+              width: 64, height: 64, borderRadius: '50%', 
+              background: profile?.photo ? `url(http://localhost:3002${profile.photo}) center/cover` : 'var(--gradient-accent)', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center', 
+              fontSize: '1.6rem', flexShrink: 0 
+            }}>
+              {!profile?.photo && '👨‍🏫'}
             </div>
             <div>
-              <p style={{ fontWeight: 600, marginBottom: 4 }}>Prof. Karim Benali</p>
+              <p style={{ fontWeight: 600, marginBottom: 4 }}>{profile?.fullName || 'Professeur'}</p>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                Professeur de Mathématiques à l'Université Mohammed V, Rabat. 
-                Spécialisé en analyse, topologie et mathématiques appliquées.
+                {profile?.title || 'Professeur de Mathématiques'}. {profile?.institution || ''}
+                <br />
+                {profile?.bio || 'Partage de connaissances mathématiques.'}
               </p>
             </div>
           </div>

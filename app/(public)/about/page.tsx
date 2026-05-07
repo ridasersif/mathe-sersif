@@ -17,7 +17,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'À Propos',
-  description: 'Biographie et parcours académique du Professeur Karim Benali, mathématicien et enseignant-chercheur.',
+  description: 'Biographie et parcours académique du professeur.',
 };
 
 export default async function AboutPage() {
@@ -26,13 +26,9 @@ export default async function AboutPage() {
     profile = await getProfile();
   } catch {}
 
-  const credentials = profile?.education || [
-    { year: '2003', degree: 'Doctorat en Mathématiques Pures', institution: 'Université Paris VI (Sorbonne)' },
-    { year: '1999', degree: 'Master en Analyse Fonctionnelle', institution: 'Université Mohammed V, Rabat' },
-    { year: '1997', degree: 'Licence en Mathématiques', institution: 'Université Mohammed V, Rabat' },
-  ];
+  const credentials = profile?.education || [];
 
-  const specialties = profile?.specialties || ['Analyse Fonctionnelle', 'Topologie Algébrique', 'Équations aux Dérivées Partielles', 'Théorie des Opérateurs', 'Mathématiques Appliquées', 'Méthodes Numériques'];
+  const specialties = profile?.specialties || [];
 
   const publications = [
     { title: 'On the regularity of solutions for a class of nonlinear elliptic equations', journal: 'Journal of Mathematical Analysis', year: '2023' },
@@ -48,17 +44,17 @@ export default async function AboutPage() {
             <div>
               <span className="label">Biographie</span>
               <h1 className="title-lg" style={{ marginTop: 8, marginBottom: 12 }}>
-                {profile?.fullName || 'Professeur Karim Benali'}
+                {profile?.fullName || 'Chargement...'}
               </h1>
               <p className="subtitle" style={{ maxWidth: 560 }}>
-                {profile?.bio || "Enseignant-chercheur en mathématiques pures et appliquées, avec plus de 20 ans d'expérience dans l'enseignement supérieur et la recherche scientifique."}
+                {profile?.bio || "Enseignant-chercheur en mathématiques."}
               </p>
               <div style={{ display: 'flex', gap: 8, marginTop: 20, flexWrap: 'wrap' }}>
                 <span className="tag" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Users size={14} /> {profile?.institution || 'Université Mohammed V'}
+                  <Users size={14} /> {profile?.institution || '...'}
                 </span>
                 <span className="tag tag-gold" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <MapPin size={14} /> {profile?.location || 'Rabat, Maroc'}
+                  <MapPin size={14} /> {profile?.location || '...'}
                 </span>
               </div>
             </div>
@@ -110,10 +106,10 @@ export default async function AboutPage() {
               <div className="divider" />
               <div className="grid-2" style={{ gap: 12 }}>
                 {[
-                  { v: `${profile?.stats.yearsOfExperience || 20}+`, l: "Années d'enseignement", i: Calendar },
-                  { v: `${profile?.stats.publications || 30}+`, l: 'Publications', i: FileText },
-                  { v: `${profile?.stats.courses || 6}`, l: 'Cours en ligne', i: BookOpen },
-                  { v: `${profile?.stats.students || 500}+`, l: 'Étudiants formés', i: Users },
+                  { v: `${profile?.stats?.yearsOfExperience || 0}+`, l: "Années d'enseignement", i: Calendar },
+                  { v: `${profile?.stats?.publications || 0}+`, l: 'Publications', i: FileText },
+                  { v: `${profile?.stats?.courses || 0}`, l: 'Cours en ligne', i: BookOpen },
+                  { v: `${profile?.stats?.students || 0}+`, l: 'Étudiants formés', i: Users },
                 ].map(({ v, l, i: Icon }) => (
                   <div key={l} className="card stat-card" style={{ padding: '20px 16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -186,8 +182,8 @@ export default async function AboutPage() {
               Pour toute question académique, collaboration de recherche ou demande d'information concernant les cours.
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a href={`mailto:${profile?.email || 'k.benali@um5.ac.ma'}`} className="btn btn-primary btn-lg">
-                {profile?.email || 'k.benali@um5.ac.ma'}
+              <a href={`mailto:${profile?.email || '...'}`} className="btn btn-primary btn-lg">
+                {profile?.email || '...'}
               </a>
               <Link href="/cours" className="btn btn-ghost btn-lg">Voir les cours</Link>
             </div>

@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { getProfile, type Profile } from '@/lib/api';
 
 import { 
   LayoutDashboard, 
@@ -24,6 +26,11 @@ const navItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    getProfile().then(setProfile).catch(() => {});
+  }, []);
 
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -39,7 +46,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <div className="navbar-logo-icon" style={{ width: 34, height: 34, fontSize: '1rem' }}>∑</div>
           <div>
             <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>Tableau de bord</span>
-            <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginLeft: 10 }}>Prof. Benali</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginLeft: 10 }}>{profile ? `Prof. ${profile.lastName}` : '...'}</span>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>

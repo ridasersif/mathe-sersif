@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { getProfile, type Profile } from '@/lib/api';
 
 const links = [
   { href: '/', label: 'Accueil' },
@@ -15,13 +16,18 @@ const links = [
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    getProfile().then(setProfile).catch(() => {});
+  }, []);
 
   return (
     <nav className="navbar">
       <div className="container navbar-inner">
         <Link href="/" className="navbar-logo">
           <div className="navbar-logo-icon">∑</div>
-          <span>Prof. Benali</span>
+          <span>{profile?.fullName ? `Prof. ${profile.lastName}` : 'Chargement...'}</span>
         </Link>
 
         <div className="navbar-nav">

@@ -59,10 +59,10 @@ export default async function HomePage() {
               </div>
               <h1 className="title-xl" style={{ marginBottom: 16 }}>
                 Professeur{' '}
-                <span className="gold-text">{profile?.fullName || 'Karim Benali'}</span>
+                <span className="gold-text">{profile?.fullName || '...'}</span>
               </h1>
               <p className="subtitle" style={{ marginBottom: 32 }}>
-                {profile?.bio || "Bienvenue sur ma plateforme académique. Explorez mes cours, articles de recherche et publications en mathématiques pures et appliquées."}
+                {profile?.bio || "Bienvenue sur ma plateforme académique."}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <Link href="/cours" className="btn btn-primary btn-lg">

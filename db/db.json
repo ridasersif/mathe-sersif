@@ -119,13 +119,13 @@
   "profile": {
     "id": 1,
     "userId": 1,
-    "firstName": "Karim",
-    "lastName": "Benali",
-    "fullName": "Karim Benali",
+    "firstName": "Rachid ",
+    "lastName": "sersif",
+    "fullName": "Sersif Rachid",
     "title": "Professeur de Mathématiques Supérieures",
     "email": "k.benali@u-polytech.ma",
     "phone": "+212 6 12 34 56 78",
-    "photo": "/uploads/prof-avatar.jpg",
+    "photo": "/uploads/profile-1778191390429.png",
     "bio": "Expert en analyse complexe et topologie différentielle. Plus de 15 ans d'expérience dans l'enseignement supérieur.",
     "bioLong": "Le Dr. Karim Benali est un chercheur renommé dont les travaux portent sur les structures topologiques complexes et leurs applications dans les systèmes dynamiques. Il a publié plus de 40 articles dans des revues internationales de premier rang.",
     "institution": "Université Polytechnique",
@@ -161,6 +161,6 @@
       "linkedin": "https://linkedin.com",
       "twitter": "https://twitter.com"
     },
-    "updatedAt": "2024-01-20T15:30:00Z"
+    "updatedAt": "2026-05-07T22:03:10.442Z"
   }
 }
