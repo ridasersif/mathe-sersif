@@ -1,0 +1,107 @@
+{
+  "courses": [
+    {
+      "id": "1",
+      "title": "Analyse Mathématique I",
+      "description": "Introduction aux limites, à la continuité et à la dérivation des fonctions réelles. Ce cours couvre les fondements de l'analyse pour les étudiants de première année.",
+      "category": "Analyse",
+      "level": "Licence 1",
+      "pdfUrl": "/uploads/analyse-1.pdf",
+      "pdfName": "analyse-mathematique-1.pdf",
+      "createdAt": "2024-09-01T08:00:00Z",
+      "updatedAt": "2024-09-01T08:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Algèbre Linéaire",
+      "description": "Étude des espaces vectoriels, des matrices et des transformations linéaires. Inclut les valeurs propres, les vecteurs propres et la diagonalisation.",
+      "category": "Algèbre",
+      "level": "Licence 2",
+      "pdfUrl": "/uploads/algebre-lineaire.pdf",
+      "pdfName": "algebre-lineaire.pdf",
+      "createdAt": "2024-09-05T08:00:00Z",
+      "updatedAt": "2024-09-05T08:00:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Probabilités et Statistiques",
+      "description": "Fondements des probabilités discrètes et continues. Variables aléatoires, lois de probabilité, espérance et variance.",
+      "category": "Probabilités",
+      "level": "Licence 2",
+      "pdfUrl": "/uploads/probabilites.pdf",
+      "pdfName": "probabilites-statistiques.pdf",
+      "createdAt": "2024-09-10T08:00:00Z",
+      "updatedAt": "2024-09-10T08:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Topologie Générale",
+      "description": "Introduction à la topologie des espaces métriques et topologiques. Ouverts, fermés, compacité et connexité.",
+      "category": "Topologie",
+      "level": "Licence 3",
+      "pdfUrl": "/uploads/topologie.pdf",
+      "pdfName": "topologie-generale.pdf",
+      "createdAt": "2024-10-01T08:00:00Z",
+      "updatedAt": "2024-10-01T08:00:00Z"
+    },
+    {
+      "id": "5",
+      "title": "Équations Différentielles",
+      "description": "Résolution des équations différentielles ordinaires du premier et second ordre. Méthodes analytiques et qualitatives.",
+      "category": "Analyse",
+      "level": "Licence 2",
+      "pdfUrl": "/uploads/equa-diff.pdf",
+      "pdfName": "equations-differentielles.pdf",
+      "createdAt": "2024-10-15T08:00:00Z",
+      "updatedAt": "2024-10-15T08:00:00Z"
+    },
+    {
+      "id": "6",
+      "title": "Théorie des Groupes",
+      "description": "Structures algébriques fondamentales : groupes, sous-groupes, homomorphismes et théorème de Lagrange.",
+      "category": "Algèbre",
+      "level": "Licence 3",
+      "pdfUrl": "/uploads/theorie-groupes.pdf",
+      "pdfName": "theorie-des-groupes.pdf",
+      "createdAt": "2024-11-01T08:00:00Z",
+      "updatedAt": "2024-11-01T08:00:00Z"
+    }
+  ],
+  "articles": [
+    {
+      "id": "1",
+      "title": "L'Importance des Mathématiques dans l'Intelligence Artificielle",
+      "excerpt": "Exploration du rôle fondamental de l'algèbre linéaire, du calcul et des probabilités dans les algorithmes d'apprentissage automatique modernes.",
+      "content": "# L'Importance des Mathématiques dans l'Intelligence Artificielle\n\nL'intelligence artificielle repose sur des fondements mathématiques solides. Sans une compréhension profonde de l'algèbre linéaire, du calcul différentiel et des probabilités, il est impossible de saisir pleinement le fonctionnement des algorithmes modernes.\n\n## Algèbre Linéaire\n\nLes réseaux de neurones sont essentiellement des compositions de transformations linéaires. Les matrices de poids, les opérations de convolution et la rétropropagation du gradient sont tous des concepts issus directement de l'algèbre linéaire.\n\n## Calcul Différentiel\n\nL'optimisation, au cœur de l'apprentissage automatique, repose sur le gradient. La descente de gradient et ses variantes (Adam, RMSProp) utilisent les dérivées partielles pour minimiser les fonctions de perte.\n\n## Probabilités et Statistiques\n\nLes modèles probabilistes, comme les réseaux bayésiens et les modèles de Markov cachés, formalisent l'incertitude. Comprendre les distributions de probabilité est essentiel pour interpréter les prédictions des modèles.\n\n## Conclusion\n\nLes mathématiques ne sont pas simplement un outil pour l'IA — elles en sont le langage fondamental.",
+      "tags": ["IA", "Algèbre", "Probabilités"],
+      "published": true,
+      "createdAt": "2024-11-15T10:00:00Z",
+      "updatedAt": "2024-11-15T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Introduction à la Topologie Algébrique",
+      "excerpt": "Une présentation accessible des concepts de base en topologie algébrique, des espaces topologiques aux groupes fondamentaux.",
+      "content": "# Introduction à la Topologie Algébrique\n\nLa topologie algébrique est l'une des branches les plus fascinantes des mathématiques modernes. Elle établit un pont entre la géométrie et l'algèbre, permettant d'étudier les propriétés qualitatives des espaces topologiques.\n\n## Espaces Topologiques\n\nUn espace topologique est un ensemble muni d'une collection d'ouverts satisfaisant certains axiomes. Cette abstraction permet de généraliser les notions de continuité et de convergence bien au-delà des espaces métriques.\n\n## Homotopie\n\nDeux chemins sont homotopes s'ils peuvent être continûment déformés l'un en l'autre. Cette notion capture l'idée intuitive de « même forme ».\n\n## Groupe Fondamental\n\nLe groupe fondamental π₁(X, x₀) d'un espace X en un point de base x₀ capture les informations sur les « trous » unidimensionnels de l'espace. Pour un cercle, ce groupe est ℤ.\n\n## Applications\n\nLa topologie algébrique trouve des applications en physique théorique, en science des données et même en robotique.",
+      "tags": ["Topologie", "Algèbre", "Recherche"],
+      "published": true,
+      "createdAt": "2024-10-20T09:00:00Z",
+      "updatedAt": "2024-10-20T09:00:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Méthodes Numériques pour les Équations Différentielles",
+      "excerpt": "Revue des principales méthodes numériques utilisées pour approximer les solutions d'équations différentielles ordinaires et aux dérivées partielles.",
+      "content": "# Méthodes Numériques pour les Équations Différentielles\n\nLorsque les solutions analytiques sont inaccessibles, les méthodes numériques constituent un outil indispensable pour les mathématiciens et les ingénieurs.\n\n## Méthode d'Euler\n\nLa méthode d'Euler est la plus simple des méthodes numériques. Elle consiste à approximer la solution en suivant la direction du champ de vecteurs pas à pas.\n\n## Méthode de Runge-Kutta\n\nLes méthodes de Runge-Kutta, notamment la méthode d'ordre 4 (RK4), offrent une précision bien supérieure à celle d'Euler pour un coût computationnel modéré.\n\n## Méthodes Implicites\n\nPour les équations raides (stiff equations), les méthodes implicites comme la méthode de Crank-Nicolson sont préférables car elles offrent une meilleure stabilité numérique.\n\n## Perspectives\n\nLes avancées en calcul scientifique et en apprentissage automatique ouvrent de nouvelles voies pour la résolution numérique des équations différentielles.",
+      "tags": ["Analyse Numérique", "EDO", "Méthodes"],
+      "published": true,
+      "createdAt": "2024-09-25T11:00:00Z",
+      "updatedAt": "2024-09-25T11:00:00Z"
+    }
+  ],
+  "admin": {
+    "id": 1,
+    "username": "admin",
+    "password": "$2b$10$rGjmHVAiZKh3p9Fq3xQu9.KZRxFhBqDjW3Sc6GjFjVxLZoQGBaLzy"
+  }
+}
