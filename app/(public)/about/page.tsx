@@ -60,7 +60,7 @@ export default async function AboutPage() {
             <div style={{ textAlign: 'center' }}>
               <div style={{ 
                 width: 140, height: 140, borderRadius: '50%', 
-                background: profile?.photo ? `url(http://localhost:3002${profile.photo}) center/cover` : 'var(--gradient-accent)', 
+                background: profile?.photo ? `url(${profile.photo}) center/cover` : 'var(--gradient-accent)', 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', 
                 fontSize: '3rem', margin: '0 auto', 
                 border: '3px solid rgba(79,142,247,0.3)',

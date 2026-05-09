@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import type { Article } from '@/lib/api';
+import { getArticles, createArticle, updateArticle, deleteArticle, uploadImage, type Article } from '@/lib/api';
 import { 
   Plus, 
   Pencil, 
@@ -15,8 +15,6 @@ import {
   Upload
 } from 'lucide-react';
 
-const API = 'http://localhost:3001';
-const AUTH = 'http://localhost:3002';
 const empty = { title: '', excerpt: '', content: '', tags: '', imageUrl: '', published: false };
 
 export default function DashboardArticlesPage() {
@@ -30,8 +28,13 @@ export default function DashboardArticlesPage() {
   const [success, setSuccess] = useState('');
 
   async function fetchArticles() {
-    const res = await fetch(`${API}/articles`);
-    setArticles(await res.json());
+    try {
+      // Get all articles including drafts
+      const data = await getArticles(false);
+      setArticles(data);
+    } catch (err) {
+      console.error(err);
+    }
   }
   useEffect(() => { fetchArticles(); }, []);
 
@@ -59,21 +62,17 @@ export default function DashboardArticlesPage() {
       let imageUrl = form.imageUrl;
 
       if (imgFile) {
-        const fd = new FormData(); fd.append('image', imgFile);
-        const up = await fetch(`${AUTH}/upload-image`, { method: 'POST', body: fd });
-        if (!up.ok) throw new Error('Erreur lors de l\'upload de l\'image');
-        const upData = await up.json();
+        const upData = await uploadImage(imgFile);
         imageUrl = upData.imageUrl;
       }
 
       const payload = { title: form.title, excerpt: form.excerpt, content: form.content, tags, imageUrl, published: form.published };
-      const now = new Date().toISOString();
       
       if (editing) {
-        await fetch(`${API}/articles/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, updatedAt: now }) });
+        await updateArticle(editing.id, payload);
         setSuccess('Article mis à jour.');
       } else {
-        await fetch(`${API}/articles`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, createdAt: now, updatedAt: now }) });
+        await createArticle(payload);
         setSuccess('Article créé.');
       }
       await fetchArticles();
@@ -86,14 +85,23 @@ export default function DashboardArticlesPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Supprimer cet article définitivement ?')) return;
-    await fetch(`${API}/articles/${id}`, { method: 'DELETE' });
-    await fetchArticles();
-    setSuccess('Article supprimé.'); setTimeout(() => setSuccess(''), 3000);
+    try {
+      await deleteArticle(id);
+      await fetchArticles();
+      setSuccess('Article supprimé.'); 
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err: any) {
+      setError(err.message || 'Erreur lors de la suppression');
+    }
   }
 
   async function togglePublish(a: Article) {
-    await fetch(`${API}/articles/${a.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ published: !a.published, updatedAt: new Date().toISOString() }) });
-    await fetchArticles();
+    try {
+      await updateArticle(a.id, { published: !a.published });
+      await fetchArticles();
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (

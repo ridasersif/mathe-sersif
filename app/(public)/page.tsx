@@ -86,7 +86,7 @@ export default async function HomePage() {
             </div>
             <div className="hero-avatar-wrap">
               <div className="hero-avatar" style={{ 
-                background: profile?.photo ? `url(http://localhost:3002${profile.photo}) center/cover` : 'var(--bg-secondary)',
+                background: profile?.photo ? `url(${profile.photo}) center/cover` : 'var(--bg-secondary)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem'
               }}>
                 {!profile?.photo && <Users size={80} strokeWidth={1} color="var(--accent-gold)" />}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getProfile, updateProfile, uploadProfilePhoto, Profile, changePassword } from '@/lib/api';
+import { getProfile, updateProfile, uploadProfilePhoto, Profile, changePassword, EducationItem } from '@/lib/api';
 import { 
   User, 
   FileText, 
@@ -21,7 +21,7 @@ import {
   Calendar
 } from 'lucide-react';
 
-type EducationItem = { year: string; degree: string; institution: string };
+
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -134,7 +134,7 @@ export default function ProfilePage() {
 
   function updateEducation(index: number, field: keyof EducationItem, value: string) {
     if (!profile) return;
-    const education = profile.education.map((e, i) =>
+    const education = profile.education.map((e: EducationItem, i: number) =>
       i === index ? { ...e, [field]: value } : e
     );
     setField('education', education);
@@ -212,7 +212,7 @@ export default function ProfilePage() {
             <div style={{
               width: 120, height: 120, borderRadius: '50%',
               background: profile.photo
-                ? `url(http://localhost:3002${profile.photo}) center/cover`
+                ? `url(${profile.photo}) center/cover`
                 : 'linear-gradient(135deg, var(--accent-blue), var(--accent-gold))',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '3rem', margin: '0 auto',

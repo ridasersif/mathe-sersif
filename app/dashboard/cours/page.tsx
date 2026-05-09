@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import type { Course } from '@/lib/api';
+import { getCourses, createCourse, updateCourse, deleteCourse, uploadPDF, uploadImage, type Course } from '@/lib/api';
 import { 
   Plus, 
   Pencil, 
@@ -14,8 +14,6 @@ import {
   BookOpen
 } from 'lucide-react';
 
-const API = 'http://localhost:3001';
-const AUTH = 'http://localhost:3002';
 const CATEGORIES = ['Analyse', 'Algèbre', 'Probabilités', 'Topologie', 'Géométrie', 'Autre'];
 const LEVELS = ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2'];
 
@@ -33,8 +31,12 @@ export default function DashboardCoursPage() {
   const [success, setSuccess] = useState('');
 
   async function fetchCourses() {
-    const res = await fetch(`${API}/courses`);
-    setCourses(await res.json());
+    try {
+      const data = await getCourses();
+      setCourses(data);
+    } catch (err) {
+      console.error(err);
+    }
   }
   useEffect(() => { fetchCourses(); }, []);
 
@@ -65,28 +67,23 @@ export default function DashboardCoursPage() {
       let imageUrl = form.imageUrl;
 
       if (pdfFile) {
-        const fd = new FormData(); fd.append('pdf', pdfFile);
-        const up = await fetch(`${AUTH}/upload`, { method: 'POST', body: fd });
-        if (!up.ok) throw new Error('Erreur lors de l\'upload du PDF');
-        const upData = await up.json();
-        pdfUrl = upData.pdfUrl; pdfName = upData.pdfName;
+        const upData = await uploadPDF(pdfFile);
+        pdfUrl = upData.pdfUrl; 
+        pdfName = upData.pdfName;
       }
 
       if (imgFile) {
-        const fd = new FormData(); fd.append('image', imgFile);
-        const up = await fetch(`${AUTH}/upload-image`, { method: 'POST', body: fd });
-        if (!up.ok) throw new Error('Erreur lors de l\'upload de l\'image');
-        const upData = await up.json();
+        const upData = await uploadImage(imgFile);
         imageUrl = upData.imageUrl;
       }
 
       const payload = { ...form, pdfUrl, pdfName, imageUrl };
-      const now = new Date().toISOString();
+      
       if (editing) {
-        await fetch(`${API}/courses/${editing.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, updatedAt: now }) });
+        await updateCourse(editing.id, payload);
         setSuccess('Cours mis à jour avec succès.');
       } else {
-        await fetch(`${API}/courses`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, createdAt: now, updatedAt: now }) });
+        await createCourse(payload);
         setSuccess('Cours ajouté avec succès.');
       }
       await fetchCourses();
@@ -101,9 +98,14 @@ export default function DashboardCoursPage() {
 
   async function handleDelete(id: string) {
     if (!confirm('Supprimer ce cours définitivement ?')) return;
-    await fetch(`${API}/courses/${id}`, { method: 'DELETE' });
-    await fetchCourses();
-    setSuccess('Cours supprimé.'); setTimeout(() => setSuccess(''), 3000);
+    try {
+      await deleteCourse(id);
+      await fetchCourses();
+      setSuccess('Cours supprimé.'); 
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err: any) {
+      setError(err.message || 'Erreur lors de la suppression');
+    }
   }
 
   return (

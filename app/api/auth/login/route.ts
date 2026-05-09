@@ -1,30 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/utils/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest) {
   const { username, password } = await req.json();
 
   try {
-    const res = await fetch('http://localhost:3002/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+    const supabase = await createClient();
+
+    // Try to login assuming the username is the email
+    // Or if they typed the username, we can't easily look up the email without a service key, 
+    // but they can type their email directly as the label suggests.
+    const email = username.includes('@') ? username : 'rachidsersif@gmial.com'; // Fallback to admin email if they type username
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    if (!res.ok) {
-      const data = await res.json();
-      return NextResponse.json({ error: data.error || 'Identifiants invalides' }, { status: 401 });
+    if (error) {
+      return NextResponse.json({ error: 'Identifiants invalides' }, { status: 401 });
     }
 
-    const data = await res.json();
-    const response = NextResponse.json({ success: true });
-    response.cookies.set('math_session', data.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    });
-    return response;
+    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Erreur de connexion au serveur' }, { status: 500 });
   }
