@@ -162,5 +162,14 @@
       "twitter": "https://twitter.com"
     },
     "updatedAt": "2026-05-07T22:03:10.442Z"
-  }
+  },
+  "users": [
+    {
+      "id": 1,
+      "username": "rachidsersif",
+      "email": "rachidsersif@gmial.com",
+      "password": "$2b$10$9lr7lomSZ3hYem.ls8z2UulLYcA38RbLBvUShPMZBDtuxrEDN9qzO",
+      "role": "admin"
+    }
+  ]
 }

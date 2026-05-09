@@ -43,14 +43,16 @@ export default function Navbar() {
         </div>
 
         <div className="navbar-mobile">
-          <button
-            className="btn btn-ghost btn-sm"
-            onClick={() => setOpen(!open)}
-            aria-label="Menu"
-            style={{ padding: '6px' }}
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setOpen(!open)}
+              aria-label="Menu"
+              style={{ padding: '6px' }}
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
           {open && (
             <div className="navbar-mobile-menu">
               {links.map((l) => (
