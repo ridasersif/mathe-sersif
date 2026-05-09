@@ -26,8 +26,8 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="container navbar-inner">
         <Link href="/" className="navbar-logo">
-          <div className="navbar-logo-icon">∑</div>
-          <span>{profile?.fullName ? `Prof. ${profile.lastName}` : 'Chargement...'}</span>
+          <img src="/logo.svg" alt="Sersif Logo" style={{ height: 40, width: 'auto' }} />
+          <span>{profile?.fullName ? `Prof. ${profile.lastName}` : 'Mathe Sersif'}</span>
         </Link>
 
         <div className="navbar-nav">
