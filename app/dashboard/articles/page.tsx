@@ -12,8 +12,11 @@ import {
   AlertCircle,
   Newspaper,
   Calendar,
-  Upload
+  Upload,
+  Eye
 } from 'lucide-react';
+import ConfirmModal from '@/components/ConfirmModal';
+import Link from 'next/link';
 
 const empty = { title: '', excerpt: '', content: '', tags: '', imageUrl: '', published: false };
 
@@ -23,17 +26,25 @@ export default function DashboardArticlesPage() {
   const [editing, setEditing] = useState<Article | null>(null);
   const [form, setForm] = useState({ ...empty });
   const [imgFile, setImgFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   async function fetchArticles() {
+    setFetching(true);
     try {
       // Get all articles including drafts
       const data = await getArticles(false);
       setArticles(data);
     } catch (err) {
       console.error(err);
+      setError('Impossible de charger les articles');
+    } finally {
+      setLoading(false);
+      setFetching(false);
     }
   }
   useEffect(() => { fetchArticles(); }, []);
@@ -83,15 +94,19 @@ export default function DashboardArticlesPage() {
     } finally { setLoading(false); }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Supprimer cet article définitivement ?')) return;
+  async function handleDelete() {
+    if (!deleteId) return;
+    setIsDeleting(true);
     try {
-      await deleteArticle(id);
+      await deleteArticle(deleteId);
       await fetchArticles();
-      setSuccess('Article supprimé.'); 
+      setSuccess('Article supprimé avec succès.'); 
+      setDeleteId(null);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la suppression');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -124,28 +139,34 @@ export default function DashboardArticlesPage() {
         </div>
       )}
 
-      {articles.length > 0 ? (
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+          <div className="spinner" style={{ width: 40, height: 40 }} />
+        </div>
+      ) : articles.length > 0 ? (
         <div className="table-wrap">
           <table>
             <thead>
               <tr>
+                <th style={{ width: 80 }}>Aperçu</th>
                 <th>Titre</th>
-                <th>Tags</th>
                 <th>Statut</th>
-                <th>Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {articles.map((a) => (
                 <tr key={a.id}>
-                  <td style={{ fontWeight: 500, maxWidth: 260 }}>{a.title}</td>
                   <td>
-                    <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                      {a.tags?.slice(0, 2).map(t => <span key={t} className="tag" style={{ fontSize: '0.7rem' }}>{t}</span>)}
-                      {a.tags?.length > 2 && <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>+{a.tags.length - 2}</span>}
+                    <div style={{ 
+                      width: 50, height: 50, borderRadius: 8, overflow: 'hidden', 
+                      background: 'var(--bg-secondary)', border: '1px solid var(--border)' 
+                    }}>
+                      <img src={a.imageUrl || 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=40&w=100'} 
+                        alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                   </td>
+                  <td style={{ fontWeight: 500, maxWidth: 260 }}>{a.title}</td>
                   <td>
                     <button 
                       onClick={() => togglePublish(a)} 
@@ -157,13 +178,15 @@ export default function DashboardArticlesPage() {
                       {a.published ? 'Publié' : 'Brouillon'}
                     </button>
                   </td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{new Date(a.createdAt).toLocaleDateString('fr-FR')}</td>
                   <td>
                     <div style={{ display: 'flex', gap: 6 }}>
+                      <Link href={`/articles/${a.id}`} className="btn btn-ghost btn-sm" title="Voir sur le site">
+                        <Eye size={14} />
+                      </Link>
                       <button onClick={() => openEdit(a)} className="btn btn-ghost btn-sm" title="Modifier">
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => handleDelete(a.id)} className="btn btn-danger btn-sm" title="Supprimer">
+                      <button onClick={() => setDeleteId(a.id)} className="btn btn-danger btn-sm" title="Supprimer">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -249,6 +272,15 @@ export default function DashboardArticlesPage() {
           </div>
         </div>
       )}
+      {/* Delete Confirmation */}
+      <ConfirmModal 
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        isLoading={isDeleting}
+        title="Supprimer cet article ?"
+        message="Cette action est irréversible. L'article sera définitivement supprimé."
+      />
     </div>
   );
 }

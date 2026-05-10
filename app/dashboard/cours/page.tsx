@@ -11,8 +11,11 @@ import {
   Upload, 
   CheckCircle2, 
   AlertCircle,
-  BookOpen
+  BookOpen,
+  Eye
 } from 'lucide-react';
+import ConfirmModal from '@/components/ConfirmModal';
+import Link from 'next/link';
 
 const CATEGORIES = ['Analyse', 'Algèbre', 'Probabilités', 'Topologie', 'Géométrie', 'Autre'];
 const LEVELS = ['Licence 1', 'Licence 2', 'Licence 3', 'Master 1', 'Master 2'];
@@ -26,16 +29,24 @@ export default function DashboardCoursPage() {
   const [form, setForm] = useState({ ...empty });
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [imgFile, setImgFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [fetching, setFetching] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   async function fetchCourses() {
+    setFetching(true);
     try {
       const data = await getCourses();
       setCourses(data);
     } catch (err) {
       console.error(err);
+      setError('Impossible de charger les cours');
+    } finally {
+      setLoading(false);
+      setFetching(false);
     }
   }
   useEffect(() => { fetchCourses(); }, []);
@@ -96,15 +107,19 @@ export default function DashboardCoursPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Supprimer ce cours définitivement ?')) return;
+  async function handleDelete() {
+    if (!deleteId) return;
+    setIsDeleting(true);
     try {
-      await deleteCourse(id);
+      await deleteCourse(deleteId);
       await fetchCourses();
-      setSuccess('Cours supprimé.'); 
+      setSuccess('Cours supprimé avec succès.'); 
+      setDeleteId(null);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
       setError(err.message || 'Erreur lors de la suppression');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -126,39 +141,46 @@ export default function DashboardCoursPage() {
         </div>
       )}
 
-      {courses.length > 0 ? (
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 0' }}>
+          <div className="spinner" style={{ width: 40, height: 40 }} />
+        </div>
+      ) : courses.length > 0 ? (
         <div className="table-wrap">
           <table>
             <thead>
               <tr>
+                <th style={{ width: 80 }}>Aperçu</th>
                 <th>Titre</th>
                 <th>Catégorie</th>
                 <th>Niveau</th>
-                <th>PDF</th>
-                <th>Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {courses.map((c) => (
                 <tr key={c.id}>
+                  <td>
+                    <div style={{ 
+                      width: 50, height: 50, borderRadius: 8, overflow: 'hidden', 
+                      background: 'var(--bg-secondary)', border: '1px solid var(--border)' 
+                    }}>
+                      <img src={c.imageUrl || 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=40&w=100'} 
+                        alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  </td>
                   <td style={{ fontWeight: 500, maxWidth: 220 }}>{c.title}</td>
                   <td><span className="tag">{c.category}</span></td>
                   <td><span className="tag tag-gold">{c.level}</span></td>
                   <td>
-                    {c.pdfUrl ? (
-                      <a href={c.pdfUrl} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <FileText size={14} /> PDF
-                      </a>
-                    ) : <span style={{ color: 'var(--text-muted)' }}>—</span>}
-                  </td>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{new Date(c.createdAt).toLocaleDateString('fr-FR')}</td>
-                  <td>
                     <div style={{ display: 'flex', gap: 6 }}>
+                      <Link href={`/cours/${c.id}`} className="btn btn-ghost btn-sm" title="Voir sur le site">
+                        <Eye size={14} />
+                      </Link>
                       <button onClick={() => openEdit(c)} className="btn btn-ghost btn-sm" title="Modifier">
                         <Pencil size={14} />
                       </button>
-                      <button onClick={() => handleDelete(c.id)} className="btn btn-danger btn-sm" title="Supprimer">
+                      <button onClick={() => setDeleteId(c.id)} className="btn btn-danger btn-sm" title="Supprimer">
                         <Trash2 size={14} />
                       </button>
                     </div>
@@ -263,6 +285,15 @@ export default function DashboardCoursPage() {
           </div>
         </div>
       )}
+      {/* Delete Confirmation */}
+      <ConfirmModal 
+        isOpen={!!deleteId}
+        onClose={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+        isLoading={isDeleting}
+        title="Supprimer ce cours ?"
+        message="Cette action est irréversible. Le fichier PDF et toutes les données associées seront définitivement supprimés."
+      />
     </div>
   );
 }

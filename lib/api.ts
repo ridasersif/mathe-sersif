@@ -145,8 +145,11 @@ export async function updateCourse(id: string, data: any): Promise<Course> {
   if (data.pdfName !== undefined) payload.pdf_name = data.pdfName;
   if (data.imageUrl !== undefined) payload.image_url = data.imageUrl;
 
-  const { data: result, error } = await supabase.from('courses').update(payload).eq('id', id).select().single();
-  if (error) throw new Error('Erreur lors de la mise à jour du cours');
+  const { error } = await supabase.from('courses').update(payload).eq('id', id);
+  if (error) {
+    console.error('Supabase Update Error:', error);
+    throw new Error('Erreur lors de la mise à jour du cours: ' + error.message);
+  }
   return getCourse(id);
 }
 
