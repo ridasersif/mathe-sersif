@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json({ error: 'Identifiants invalides' }, { status: 401 });
+      console.error('Supabase Login Error:', error);
+      return NextResponse.json({ error: error.message }, { status: 401 });
     }
 
     return NextResponse.json({ success: true });
