@@ -69,23 +69,36 @@ export interface Profile {
   updatedAt: string;
 }
 
+// ─── Upload helpers (use anon client — storage bucket must allow authenticated uploads) ───
 export async function uploadImage(file: File): Promise<{ imageUrl: string }> {
-  const fileName = `${Date.now()}-${file.name.replace(/\\s+/g, '-')}`;
-  const { data, error } = await supabase.storage
-    .from('uploads')
-    .upload(fileName, file);
-
+  const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+  const { error } = await supabase.storage.from('uploads').upload(fileName, file);
   if (error) throw new Error("Erreur lors de l'upload de l'image");
-  
   const { data: publicData } = supabase.storage.from('uploads').getPublicUrl(fileName);
   return { imageUrl: publicData.publicUrl };
 }
 
-// ─── Courses ──────────────────────────────────────────────────────────────────
+export async function uploadPDF(file: File): Promise<{ pdfUrl: string; pdfName: string }> {
+  const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+  const { error } = await supabase.storage.from('uploads').upload(fileName, file);
+  if (error) throw new Error("Erreur lors de l'upload du PDF");
+  const { data: publicData } = supabase.storage.from('uploads').getPublicUrl(fileName);
+  return { pdfUrl: publicData.publicUrl, pdfName: file.name };
+}
+
+export async function uploadProfilePhoto(file: File): Promise<{ photoUrl: string }> {
+  const fileName = `profile-${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
+  const { error } = await supabase.storage.from('uploads').upload(fileName, file);
+  if (error) throw new Error("Erreur lors de l'upload de la photo");
+  const { data: publicData } = supabase.storage.from('uploads').getPublicUrl(fileName);
+  return { photoUrl: publicData.publicUrl };
+}
+
+// ─── Courses (reads: direct Supabase | writes: API routes with admin client) ────
+
 export async function getCourses(): Promise<Course[]> {
   const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
   if (error) throw new Error('Erreur lors du chargement des cours');
-  // Map snake_case to camelCase
   return data.map(c => ({
     id: c.id,
     title: c.title,
@@ -96,7 +109,7 @@ export async function getCourses(): Promise<Course[]> {
     pdfName: c.pdf_name,
     imageUrl: c.image_url,
     createdAt: c.created_at,
-    updatedAt: c.updated_at
+    updatedAt: c.updated_at,
   }));
 }
 
@@ -113,52 +126,52 @@ export async function getCourse(id: string): Promise<Course> {
     pdfName: data.pdf_name,
     imageUrl: data.image_url,
     createdAt: data.created_at,
-    updatedAt: data.updated_at
+    updatedAt: data.updated_at,
   };
 }
 
 export async function createCourse(data: any): Promise<Course> {
-  const payload = {
-    id: Date.now().toString(),
-    title: data.title,
-    description: data.description,
-    category: data.category,
-    level: data.level,
-    pdf_url: data.pdfUrl,
-    pdf_name: data.pdfName,
-    image_url: data.imageUrl,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+  const res = await fetch('/api/courses', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Erreur lors de la création du cours');
+  const c = json.course;
+  return {
+    id: c.id, title: c.title, description: c.description,
+    category: c.category, level: c.level,
+    pdfUrl: c.pdf_url, pdfName: c.pdf_name, imageUrl: c.image_url,
+    createdAt: c.created_at, updatedAt: c.updated_at,
   };
-  const { data: result, error } = await supabase.from('courses').insert(payload).select().single();
-  if (error) throw new Error('Erreur lors de la création du cours: ' + error.message);
-  return { ...data, id: result.id };
 }
 
 export async function updateCourse(id: string, data: any): Promise<Course> {
-  const payload: any = { updated_at: new Date().toISOString() };
-  if (data.title !== undefined) payload.title = data.title;
-  if (data.description !== undefined) payload.description = data.description;
-  if (data.category !== undefined) payload.category = data.category;
-  if (data.level !== undefined) payload.level = data.level;
-  if (data.pdfUrl !== undefined) payload.pdf_url = data.pdfUrl;
-  if (data.pdfName !== undefined) payload.pdf_name = data.pdfName;
-  if (data.imageUrl !== undefined) payload.image_url = data.imageUrl;
-
-  const { error } = await supabase.from('courses').update(payload).eq('id', id);
-  if (error) {
-    console.error('Supabase Update Error:', error);
-    throw new Error('Erreur lors de la mise à jour du cours: ' + error.message);
-  }
-  return getCourse(id);
+  const res = await fetch(`/api/courses/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Erreur lors de la mise à jour du cours');
+  const c = json.course;
+  return {
+    id: c.id, title: c.title, description: c.description,
+    category: c.category, level: c.level,
+    pdfUrl: c.pdf_url, pdfName: c.pdf_name, imageUrl: c.image_url,
+    createdAt: c.created_at, updatedAt: c.updated_at,
+  };
 }
 
 export async function deleteCourse(id: string): Promise<void> {
-  const { error } = await supabase.from('courses').delete().eq('id', id);
-  if (error) throw new Error('Erreur lors de la suppression du cours');
+  const res = await fetch(`/api/courses/${id}`, { method: 'DELETE' });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Erreur lors de la suppression du cours');
 }
 
-// ─── Articles ─────────────────────────────────────────────────────────────────
+// ─── Articles (reads: direct Supabase | writes: API routes with admin client) ───
+
 export async function getArticles(publishedOnly = false): Promise<Article[]> {
   let query = supabase.from('articles').select('*').order('created_at', { ascending: false });
   if (publishedOnly) query = query.eq('published', true);
@@ -173,7 +186,7 @@ export async function getArticles(publishedOnly = false): Promise<Article[]> {
     imageUrl: a.image_url,
     published: a.published,
     createdAt: a.created_at,
-    updatedAt: a.updated_at
+    updatedAt: a.updated_at,
   }));
 }
 
@@ -189,66 +202,56 @@ export async function getArticle(id: string): Promise<Article> {
     imageUrl: data.image_url,
     published: data.published,
     createdAt: data.created_at,
-    updatedAt: data.updated_at
+    updatedAt: data.updated_at,
   };
 }
 
 export async function createArticle(data: any): Promise<Article> {
-  const payload = {
-    id: Date.now().toString(),
-    title: data.title,
-    excerpt: data.excerpt,
-    content: data.content,
-    tags: data.tags || [],
-    image_url: data.imageUrl,
-    published: data.published !== undefined ? data.published : true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+  const res = await fetch('/api/articles', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Erreur lors de la création de l'article");
+  const a = json.article;
+  return {
+    id: a.id, title: a.title, excerpt: a.excerpt, content: a.content,
+    tags: a.tags, imageUrl: a.image_url, published: a.published,
+    createdAt: a.created_at, updatedAt: a.updated_at,
   };
-  const { data: result, error } = await supabase.from('articles').insert(payload).select().single();
-  if (error) throw new Error("Erreur lors de la création de l'article");
-  return { ...data, id: result.id };
 }
 
 export async function updateArticle(id: string, data: any): Promise<Article> {
-  const payload: any = { updated_at: new Date().toISOString() };
-  if (data.title !== undefined) payload.title = data.title;
-  if (data.excerpt !== undefined) payload.excerpt = data.excerpt;
-  if (data.content !== undefined) payload.content = data.content;
-  if (data.tags !== undefined) payload.tags = data.tags;
-  if (data.imageUrl !== undefined) payload.image_url = data.imageUrl;
-  if (data.published !== undefined) payload.published = data.published;
-
-  const { error } = await supabase.from('articles').update(payload).eq('id', id);
-  if (error) throw new Error("Erreur lors de la mise à jour de l'article");
-  return getArticle(id);
+  const res = await fetch(`/api/articles/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Erreur lors de la mise à jour de l'article");
+  const a = json.article;
+  return {
+    id: a.id, title: a.title, excerpt: a.excerpt, content: a.content,
+    tags: a.tags, imageUrl: a.image_url, published: a.published,
+    createdAt: a.created_at, updatedAt: a.updated_at,
+  };
 }
 
 export async function deleteArticle(id: string): Promise<void> {
-  const { error } = await supabase.from('articles').delete().eq('id', id);
-  if (error) throw new Error("Erreur lors de la suppression de l'article");
+  const res = await fetch(`/api/articles/${id}`, { method: 'DELETE' });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Erreur lors de la suppression de l'article");
 }
 
-// ─── Upload PDF ───────────────────────────────────────────────────────────────
-export async function uploadPDF(file: File): Promise<{ pdfUrl: string; pdfName: string }> {
-  const fileName = `${Date.now()}-${file.name.replace(/\\s+/g, '-')}`;
-  const { data, error } = await supabase.storage
-    .from('uploads')
-    .upload(fileName, file);
+// ─── Profile (reads: direct Supabase | writes: API route with admin client) ────
 
-  if (error) throw new Error("Erreur lors de l'upload du PDF");
-  
-  const { data: publicData } = supabase.storage.from('uploads').getPublicUrl(fileName);
-  return { pdfUrl: publicData.publicUrl, pdfName: file.name };
-}
-
-// ─── Profile ──────────────────────────────────────────────────────────────────
 export async function getProfile(): Promise<Profile | null> {
   const { data, error } = await supabase.from('profiles').select('*').limit(1).single();
-  if (error) return null; // No profile found or error
+  if (error) return null;
   return {
     id: data.id,
-    user_id: data.id,
+    userId: data.id,
     firstName: data.first_name,
     lastName: data.last_name,
     fullName: data.full_name,
@@ -266,49 +269,19 @@ export async function getProfile(): Promise<Profile | null> {
     stats: data.stats,
     education: data.education,
     socialLinks: data.social_links,
-    updatedAt: data.updated_at
+    updatedAt: data.updated_at,
   } as any;
 }
 
 export async function updateProfile(data: any): Promise<Profile | null> {
-  // Try to fetch existing to get its ID
-  const existing = await getProfile();
-  if (!existing) throw new Error('Profile introuvable');
-  
-  const payload: any = { updated_at: new Date().toISOString() };
-  if (data.firstName !== undefined) payload.first_name = data.firstName;
-  if (data.lastName !== undefined) payload.last_name = data.lastName;
-  if (data.fullName !== undefined) payload.full_name = data.fullName;
-  if (data.title !== undefined) payload.title = data.title;
-  if (data.email !== undefined) payload.email = data.email;
-  if (data.phone !== undefined) payload.phone = data.phone;
-  if (data.photo !== undefined) payload.photo = data.photo;
-  if (data.bio !== undefined) payload.bio = data.bio;
-  if (data.bioLong !== undefined) payload.bio_long = data.bioLong;
-  if (data.institution !== undefined) payload.institution = data.institution;
-  if (data.faculty !== undefined) payload.faculty = data.faculty;
-  if (data.department !== undefined) payload.department = data.department;
-  if (data.location !== undefined) payload.location = data.location;
-  if (data.specialties !== undefined) payload.specialties = data.specialties;
-  if (data.stats !== undefined) payload.stats = data.stats;
-  if (data.education !== undefined) payload.education = data.education;
-  if (data.socialLinks !== undefined) payload.social_links = data.socialLinks;
-
-  const { error } = await supabase.from('profiles').update(payload).eq('id', existing.id);
-  if (error) throw new Error('Erreur lors de la mise à jour du profil');
+  const res = await fetch('/api/profile/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Erreur lors de la mise à jour du profil');
   return getProfile();
-}
-
-export async function uploadProfilePhoto(file: File): Promise<{ photoUrl: string }> {
-  const fileName = `profile-${Date.now()}-${file.name.replace(/\\s+/g, '-')}`;
-  const { data, error } = await supabase.storage
-    .from('uploads')
-    .upload(fileName, file);
-
-  if (error) throw new Error("Erreur lors de l'upload de la photo");
-  
-  const { data: publicData } = supabase.storage.from('uploads').getPublicUrl(fileName);
-  return { photoUrl: publicData.publicUrl };
 }
 
 export async function changePassword(oldPassword: string, newPassword: string): Promise<void> {
