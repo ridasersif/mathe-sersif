@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getCourses, type Course } from '@/lib/api';
 import SearchInput from '@/components/SearchInput';
+
+export const dynamic = 'force-dynamic';
+
 import { 
   Variable, 
   Sigma, 

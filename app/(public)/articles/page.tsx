@@ -4,6 +4,8 @@ import { getArticles, type Article } from '@/lib/api';
 import { Newspaper, Search, ChevronLeft, ChevronRight, Calendar, Tag } from 'lucide-react';
 import SearchInput from '@/components/SearchInput';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Articles & Recherche — Rachid Sersif',
   description:

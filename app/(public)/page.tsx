@@ -3,6 +3,9 @@ import { getCourses, getArticles, getProfile, type Course, type Article, type Pr
 import HeroVisual from '@/components/HeroVisual';
 import InteractiveMathCanvas from '@/components/InteractiveMathCanvas';
 import GlowingMathSphere from '@/components/GlowingMathSphere';
+
+export const dynamic = 'force-dynamic';
+
 import { 
   GraduationCap, 
   BookOpen, 

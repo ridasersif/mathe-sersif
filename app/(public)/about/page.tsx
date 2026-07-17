@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getProfile, type Profile } from '@/lib/api';
+
+export const dynamic = 'force-dynamic';
+
 import { 
   Users, 
   Mail, 
