@@ -16,8 +16,21 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'À Propos',
-  description: 'Biographie et parcours académique du professeur.',
+  title: 'Rachid Sersif — Biographie & Parcours Académique',
+  description:
+    "Rachid Sersif, Docteur en Mathématiques (2024) et Professeur de lycée depuis 2015. Passionné par l’enseignement, la recherche et le partage des connaissances scientifiques.",
+  keywords: [
+    'Rachid Sersif',
+    'biographie',
+    'docteur mathématiques',
+    'professeur lycée maroc',
+    'parcours académique',
+  ],
+  openGraph: {
+    title: 'Rachid Sersif — Biographie & Parcours Académique',
+    description:
+      "Docteur en Mathématiques (2024) et Professeur de lycée depuis 2015. Passionné par l’enseignement et la recherche scientifique.",
+  },
 };
 
 export default async function AboutPage() {

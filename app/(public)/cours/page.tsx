@@ -17,8 +17,25 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Cours de Mathématiques',
-  description: 'Accédez librement à tous les cours de mathématiques en PDF — Analyse, Algèbre, Probabilités, Topologie et plus.',
+  title: 'Cours de Mathématiques — Rachid Sersif',
+  description:
+    'Téléchargez librement les cours de mathématiques de Rachid Sersif en PDF — Analyse, Algèbre, Probabilités, Topologie, Géométrie. Niveau lycée et supérieur.',
+  keywords: [
+    'cours mathématiques PDF',
+    'Rachid Sersif cours',
+    'analyse mathématique',
+    'algèbre linéaire',
+    'probabilités',
+    'topologie',
+    'géométrie',
+    'lycée maroc',
+    'téléchargement cours',
+  ],
+  openGraph: {
+    title: 'Cours de Mathématiques — Rachid Sersif',
+    description:
+      'Accédez librement aux cours de mathématiques de Rachid Sersif en PDF — Analyse, Algèbre, Probabilités et plus.',
+  },
 };
 
 const categoryIcons: Record<string, any> = {

@@ -43,7 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Top bar */}
       <header style={{ background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border)', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', position: 'sticky', top: 0, zIndex: 50 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <img src="/logo.svg" alt="Logo" style={{ height: 32, width: 'auto' }} />
+          <img src="/image.png" alt="Logo" style={{ height: 32, width: 'auto' }} />
           <div>
             <span style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700 }}>Tableau de bord</span>
             <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginLeft: 10 }}>{profile ? `Prof. ${profile.lastName}` : '...'}</span>

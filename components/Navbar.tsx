@@ -23,7 +23,7 @@ export default function Navbar() {
   const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
-    getProfile().then(setProfile).catch(() => {});
+    getProfile().then(setProfile).catch(() => { });
 
     // Check Supabase auth state
     const supabase = createClient();
@@ -55,7 +55,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="container navbar-inner">
         <Link href="/" className="navbar-logo">
-          <img src="/logo.svg" alt="Sersif Logo" style={{ height: 40, width: 'auto' }} />
+          <img src="/image.png" alt="Sersif Logo" style={{ height: 40, width: 'auto' }} />
           <span>{profile?.fullName ? `Prof. ${profile.lastName}` : 'Mathe Sersif'}</span>
         </Link>
 

@@ -4,8 +4,14 @@ import { getArticles, type Article } from '@/lib/api';
 import { Newspaper } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Articles & Recherche',
-  description: 'Articles, publications et recherches en mathématiques du Professeur Benali.',
+  title: 'Articles & Recherche — Rachid Sersif',
+  description:
+    'Articles de recherche, publications et réflexions en mathématiques par Rachid Sersif, Docteur en Mathématiques. Analyse, algèbre, probabilités et plus.',
+  keywords: ['articles mathématiques', 'recherche', 'publications', 'Rachid Sersif', 'analyse', 'algèbre'],
+  openGraph: {
+    title: 'Articles & Recherche — Rachid Sersif',
+    description: 'Découvrez les publications et articles de recherche en mathématiques de Rachid Sersif.',
+  },
 };
 
 export default async function ArticlesPage() {
