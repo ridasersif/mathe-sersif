@@ -1,6 +1,23 @@
-import { createClient } from '@/utils/supabase/client';
+// lib/api.ts
+// ─────────────────────────────────────────────────────────────────────────────
+// IMPORTANT: This module is used in BOTH server and client contexts.
+// - Reads (getProfile, getCourses, etc.) are called from Server Components
+//   and must use the SERVER-side Supabase client to avoid caching issues.
+// - Writes (createCourse, updateProfile, etc.) go through API routes and
+//   use fetch() — no Supabase client needed on the write path.
+// - Client-side browser usage (file uploads, auth) uses createBrowserClient.
+//
+// The key fix for Vercel/Next.js stale data: use the server client on
+// server-side reads so no browser fetch cache or CDN caching interferes.
+// ─────────────────────────────────────────────────────────────────────────────
 
-export const supabase = createClient();
+import { createClient as createServerClient } from '@/utils/supabase/server';
+import { createClient as createBrowserClientFn } from '@/utils/supabase/client';
+
+// Browser-only singleton (for uploads + auth + client-side realtime)
+export const supabase = createBrowserClientFn();
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Course {
   id: string;
@@ -10,7 +27,7 @@ export interface Course {
   level: string;
   pdfUrl: string;
   pdfName: string;
-  imageUrl?: string; 
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,7 +38,7 @@ export interface Article {
   excerpt: string;
   content: string;
   tags: string[];
-  imageUrl?: string; 
+  imageUrl?: string;
   published: boolean;
   createdAt: string;
   updatedAt: string;
@@ -69,7 +86,8 @@ export interface Profile {
   updatedAt: string;
 }
 
-// ─── Upload helpers (use anon client — storage bucket must allow authenticated uploads) ───
+// ─── Upload helpers (browser-client only) ────────────────────────────────────
+
 export async function uploadImage(file: File): Promise<{ imageUrl: string }> {
   const fileName = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
   const { error } = await supabase.storage.from('uploads').upload(fileName, file);
@@ -94,10 +112,15 @@ export async function uploadProfilePhoto(file: File): Promise<{ photoUrl: string
   return { photoUrl: publicData.publicUrl };
 }
 
-// ─── Courses (reads: direct Supabase | writes: API routes with admin client) ────
+// ─── Courses — Server-side reads (fresh data every request on Vercel) ─────────
 
 export async function getCourses(): Promise<Course[]> {
-  const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false });
+  // createServerClient reads cookies(); must only be called from server context
+  const db = await createServerClient();
+  const { data, error } = await db
+    .from('courses')
+    .select('*')
+    .order('created_at', { ascending: false });
   if (error) throw new Error('Erreur lors du chargement des cours');
   return data.map(c => ({
     id: c.id,
@@ -114,7 +137,8 @@ export async function getCourses(): Promise<Course[]> {
 }
 
 export async function getCourse(id: string): Promise<Course> {
-  const { data, error } = await supabase.from('courses').select('*').eq('id', id).single();
+  const db = await createServerClient();
+  const { data, error } = await db.from('courses').select('*').eq('id', id).single();
   if (error || !data) throw new Error('Cours introuvable');
   return {
     id: data.id,
@@ -170,10 +194,11 @@ export async function deleteCourse(id: string): Promise<void> {
   if (!res.ok) throw new Error(json.error || 'Erreur lors de la suppression du cours');
 }
 
-// ─── Articles (reads: direct Supabase | writes: API routes with admin client) ───
+// ─── Articles — Server-side reads ─────────────────────────────────────────────
 
 export async function getArticles(publishedOnly = false): Promise<Article[]> {
-  let query = supabase.from('articles').select('*').order('created_at', { ascending: false });
+  const db = await createServerClient();
+  let query = db.from('articles').select('*').order('created_at', { ascending: false });
   if (publishedOnly) query = query.eq('published', true);
   const { data, error } = await query;
   if (error) throw new Error('Erreur lors du chargement des articles');
@@ -191,7 +216,8 @@ export async function getArticles(publishedOnly = false): Promise<Article[]> {
 }
 
 export async function getArticle(id: string): Promise<Article> {
-  const { data, error } = await supabase.from('articles').select('*').eq('id', id).single();
+  const db = await createServerClient();
+  const { data, error } = await db.from('articles').select('*').eq('id', id).single();
   if (error || !data) throw new Error('Article introuvable');
   return {
     id: data.id,
@@ -244,10 +270,11 @@ export async function deleteArticle(id: string): Promise<void> {
   if (!res.ok) throw new Error(json.error || "Erreur lors de la suppression de l'article");
 }
 
-// ─── Profile (reads: direct Supabase | writes: API route with admin client) ────
+// ─── Profile — Server-side read ───────────────────────────────────────────────
 
 export async function getProfile(): Promise<Profile | null> {
-  const { data, error } = await supabase.from('profiles').select('*').limit(1).single();
+  const db = await createServerClient();
+  const { data, error } = await db.from('profiles').select('*').limit(1).single();
   if (error) return null;
   return {
     id: data.id,
