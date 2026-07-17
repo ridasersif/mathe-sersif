@@ -363,37 +363,88 @@ textarea.form-input { resize: vertical; min-height: 120px; }
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 100px 0 80px;
+  padding: 120px 0 100px;
   background: var(--gradient-hero);
 }
-.hero::before {
-  content: '';
+
+/* ── Hero Mathematical Animated Background ─────────────── */
+.hero-math-background {
   position: absolute;
-  top: -40%;
-  right: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(79,142,247,0.08) 0%, transparent 70%);
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
+  overflow: hidden;
 }
-.hero::after {
-  content: '';
+
+/* Subtly animated coordinate grid overlay */
+.math-bg-grid {
   position: absolute;
-  bottom: -20%;
-  left: -5%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(124,92,191,0.06) 0%, transparent 70%);
-  pointer-events: none;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(79,142,247,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79,142,247,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at 60% 50%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at 60% 50%, black 20%, transparent 80%);
+  opacity: 0.85;
 }
-.hero-content { position: relative; z-index: 1; max-width: 700px; }
+
+/* SVG background waves */
+.math-bg-waves {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Floating symbols styles with random delay positions and sizes */
+.math-bg-symbol {
+  position: absolute;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  color: var(--text-primary);
+  opacity: 0.05;
+  filter: blur(0.5px);
+  user-select: none;
+  animation: float-bg-math 12s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.math-bg-symbol.symbol-1 { top: 15%; left: 8%; font-size: 3.5rem; animation-delay: 0s; color: var(--accent-blue); }
+.math-bg-symbol.symbol-2 { top: 20%; left: 45%; font-size: 5rem; animation-delay: 2s; color: var(--accent-gold); }
+.math-bg-symbol.symbol-3 { top: 60%; left: 15%; font-size: 3rem; animation-delay: 4s; }
+.math-bg-symbol.symbol-4 { top: 75%; left: 38%; font-size: 2.5rem; animation-delay: 1s; color: var(--accent-blue); }
+.math-bg-symbol.symbol-5 { top: 12%; right: 40%; font-size: 2rem; animation-delay: 3s; }
+.math-bg-symbol.symbol-6 { top: 45%; right: 45%; font-size: 2.2rem; animation-delay: 5s; color: var(--accent-gold); }
+.math-bg-symbol.symbol-7 { top: 70%; right: 12%; font-size: 3.2rem; animation-delay: 1.5s; color: var(--accent-blue); }
+.math-bg-symbol.symbol-8 { top: 35%; right: 8%; font-size: 4rem; animation-delay: 0.5s; }
+.math-bg-symbol.symbol-9 { top: 80%; left: 58%; font-size: 1.8rem; animation-delay: 2.5s; }
+.math-bg-symbol.symbol-10 { top: 48%; left: 5%; font-size: 2.8rem; animation-delay: 3.5s; color: var(--accent-gold); }
+
+@keyframes float-bg-math {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0.05;
+  }
+  50% {
+    transform: translateY(-25px) rotate(8deg) scale(1.08);
+    opacity: 0.09;
+  }
+}
+
+/* ── Content layouts ───────────────────────────────────── */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+}
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  background: rgba(79,142,247,0.1);
-  border: 1px solid rgba(79,142,247,0.25);
+  background: rgba(79,142,247,0.08);
+  border: 1px solid rgba(79,142,247,0.2);
   border-radius: 20px;
   font-size: 0.8rem;
   color: var(--accent-blue);
@@ -401,46 +452,29 @@ textarea.form-input { resize: vertical; min-height: 120px; }
 }
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 60px;
+  grid-template-columns: 1fr 300px;
+  gap: 40px;
   align-items: center;
+  position: relative;
+  z-index: 2;
 }
-@media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 40px; justify-items: center; text-align: center; }
+}
 
-/* Old avatar — kept for compat */
+/* ── Photo & Orbiting Rings system on the right ────────── */
 .hero-avatar-wrap {
+  position: relative;
   display: flex;
   justify-content: center;
-  position: relative;
-}
-.hero-avatar {
-  width: 280px; height: 280px;
-  border-radius: 50%;
-  background: var(--gradient-accent);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 6rem;
-  animation: pulse-glow 4s ease-in-out infinite;
-  border: 3px solid rgba(79,142,247,0.3);
-  position: relative; overflow: hidden;
-}
-
-
-/* ── HeroVisual ────────────────────────────────────────────── */
-.hero-visual-wrap {
-  position: relative;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  z-index: 1;
-  padding: 10px;
+  z-index: 2;
 }
 
-/* ── Atom system (photo + orbital rings) ─────────────────── */
 .hero-atom-system {
   position: relative;
-  width: 210px;
-  height: 210px;
+  width: 200px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,19 +492,19 @@ textarea.form-input { resize: vertical; min-height: 120px; }
   pointer-events: none;
 }
 .atom-ring-1 {
-  border-color: rgba(79,142,247,0.4);
+  border-color: rgba(79,142,247,0.45);
   box-shadow: inset 0 0 0 0.5px rgba(79,142,247,0.15);
 }
 .atom-ring-2 {
   inset: 12px;
-  border-color: rgba(167,139,250,0.4);
+  border-color: rgba(167,139,250,0.45);
 }
 .atom-ring-3 {
   inset: 24px;
-  border-color: rgba(56,189,248,0.3);
+  border-color: rgba(56,189,248,0.35);
 }
 
-/* Electron dots on each ring */
+/* Electron dots on rings */
 .atom-electron {
   position: absolute;
   top: -4px;
@@ -493,17 +527,17 @@ textarea.form-input { resize: vertical; min-height: 120px; }
   box-shadow: 0 0 8px 2px rgba(56,189,248,0.9);
 }
 
-/* Photo ring */
+/* Photo frame */
 .hero-photo-ring {
   position: relative;
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   flex-shrink: 0;
   z-index: 2;
 }
 .hero-photo-inner {
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   overflow: hidden;
   border: 3px solid transparent;
@@ -511,7 +545,7 @@ textarea.form-input { resize: vertical; min-height: 120px; }
               var(--gradient-accent) border-box;
   box-shadow: 
     0 0 0 6px rgba(79,142,247,0.06),
-    0 0 30px rgba(79,142,247,0.2),
+    0 0 35px rgba(79,142,247,0.22),
     var(--shadow-lg);
   animation: pulse-glow 4s ease-in-out infinite;
 }
@@ -531,7 +565,7 @@ textarea.form-input { resize: vertical; min-height: 120px; }
   color: var(--accent-gold);
 }
 
-/* Gold orbiting dot */
+/* Orbiting dot */
 .hero-photo-orbit {
   position: absolute;
   inset: -12px;
@@ -544,196 +578,29 @@ textarea.form-input { resize: vertical; min-height: 120px; }
   top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: var(--gradient-gold);
-  box-shadow: 0 0 10px 3px rgba(201,168,76,0.8);
+  box-shadow: 0 0 10px 2px rgba(201,168,76,0.8);
 }
 @keyframes orbit-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
-/* ── Trigonometric graph panel ── */
-.math-waves-panel {
-  width: 100%;
-  max-width: 320px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(10px);
-}
-.math-waves-panel .panel-title {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-  font-weight: 600;
-  text-align: center;
-  font-family: 'Inter', sans-serif;
-}
-
-/* ── 3D Math scene ───────────────────────────────────────── */
-.math-3d-scene {
-  position: relative;
-  width: 210px;
-  height: 210px;
-  perspective: 700px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Background glow sphere */
-.math-scene-glow {
-  position: absolute;
-  inset: 20%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(79,142,247,0.12) 0%,
-    rgba(124,92,191,0.06) 50%,
-    transparent 70%
-  );
-  animation: glow-breathe 3s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes glow-breathe {
-  0%, 100% { transform: scale(1);   opacity: 0.8; }
-  50%       { transform: scale(1.2); opacity: 1;   }
-}
-
-/* Grid mesh */
-.math-grid-mesh {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background-image:
-    linear-gradient(rgba(79,142,247,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79,142,247,0.05) 1px, transparent 1px);
-  background-size: 24px 24px;
-  mask-image: radial-gradient(circle, black 30%, transparent 70%);
-  -webkit-mask-image: radial-gradient(circle, black 30%, transparent 70%);
-  pointer-events: none;
-  animation: mesh-spin 20s linear infinite;
-}
-@keyframes mesh-spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-/* The 3D stage */
-.math-3d-stage {
-  width: 80px;
-  height: 80px;
-  position: relative;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* Cube faces */
-.oct-face {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(79,142,247,0.25);
-  border-radius: 10px;
-  background: rgba(79,142,247,0.05);
-  backdrop-filter: blur(5px);
-  backface-visibility: visible;
-  transition: all 0.3s ease;
-}
-.oct-face:hover {
-  background: rgba(79,142,247,0.15);
-  border-color: rgba(79,142,247,0.6);
-  box-shadow: 0 0 16px rgba(79,142,247,0.35);
-}
-.oct-face-1 { transform: translateZ(40px); background: rgba(79,142,247,0.07); }
-.oct-face-2 { transform: translateZ(-40px) rotateY(180deg); background: rgba(167,139,250,0.07); }
-.oct-face-3 { transform: translateX(40px)  rotateY(90deg);  background: rgba(56,189,248,0.07); }
-.oct-face-4 { transform: translateX(-40px) rotateY(-90deg); background: rgba(244,114,182,0.07); }
-.oct-face-5 { transform: translateY(-40px) rotateX(90deg);  background: rgba(52,211,153,0.07); }
-.oct-face-6 { transform: translateY(40px)  rotateX(-90deg); background: rgba(251,191,36,0.07); }
-.oct-face-7 { transform: rotateY(45deg) translateZ(40px) rotateY(-45deg); opacity: 0.4; }
-.oct-face-8 { transform: rotateY(-45deg) translateZ(40px) rotateY(45deg); opacity: 0.4; }
-
-.math-glyph {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  background: var(--gradient-accent);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-  user-select: none;
-  filter: drop-shadow(0 0 6px rgba(79,142,247,0.5));
-}
-
-/* Floating math particles */
-.math-particle {
-  position: absolute;
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  animation: float-particle 4s ease-in-out infinite;
-  pointer-events: none;
-  user-select: none;
-  z-index: 3;
-}
-@keyframes float-particle {
-  0%, 100% { transform: translateY(0)    scale(1);    opacity: 0.4; }
-  33%       { transform: translateY(-8px) scale(1.08); opacity: 0.7; }
-  66%       { transform: translateY(4px)  scale(0.96); opacity: 0.35; }
-}
-
-/* Corner accent dots */
-.corner-dot {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--gradient-accent);
-  box-shadow: 0 0 6px rgba(79,142,247,0.7);
-  animation: corner-pulse 2s ease-in-out infinite;
-  z-index: 4;
-}
-@keyframes corner-pulse {
-  0%, 100% { transform: scale(1);   opacity: 0.6; }
-  50%       { transform: scale(1.6); opacity: 0.9; }
-}
-
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .hero-visual-wrap { flex-direction: row; justify-content: center; gap: 16px; padding: 0; }
-  .hero-atom-system { width: 150px; height: 150px; }
-  .hero-photo-ring  { width: 80px; height: 80px; }
-  .hero-photo-inner { width: 80px; height: 80px; }
-  .math-waves-panel { display: none; }
-  .math-3d-scene    { width: 150px; height: 150px; }
-  .math-3d-stage    { width: 60px; height: 60px; }
-  .oct-face         { width: 60px; height: 60px; }
-  .oct-face-1 { transform: translateZ(30px); }
-  .oct-face-2 { transform: translateZ(-30px) rotateY(180deg); }
-  .oct-face-3 { transform: translateX(30px) rotateY(90deg); }
-  .oct-face-4 { transform: translateX(-30px) rotateY(-90deg); }
-  .oct-face-5 { transform: translateY(-30px) rotateX(90deg); }
-  .oct-face-6 { transform: translateY(30px) rotateX(-90deg); }
-  .math-glyph { font-size: 1.15rem; }
-  .math-particle { display: none; }
+  .hero { padding: 80px 0 60px; }
+  .hero-atom-system { width: 160px; height: 160px; }
+  .hero-photo-ring  { width: 90px; height: 90px; }
+  .hero-photo-inner { width: 90px; height: 90px; }
   .atom-ring-3 { display: none; }
 }
 @media (max-width: 600px) {
-  .hero-visual-wrap { flex-direction: column; gap: 16px; }
-  .math-grid-mesh { display: none; }
-  .corner-dot { display: none; }
+  .hero-math-background { display: none; }
 }
+
 
 .hero-stats {
   display: flex;

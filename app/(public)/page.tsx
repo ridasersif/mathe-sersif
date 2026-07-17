@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { getCourses, getArticles, getProfile, type Course, type Article, type Profile } from '@/lib/api';
 import HeroVisual from '@/components/HeroVisual';
+import InteractiveMathCanvas from '@/components/InteractiveMathCanvas';
+import GlowingMathSphere from '@/components/GlowingMathSphere';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -49,9 +51,9 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="hero">
-        <div className="container">
+      <section className="hero" style={{ position: 'relative', overflow: 'hidden' }}>
+        <InteractiveMathCanvas />
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="hero-grid">
             <div className="hero-content animate-fadeUp">
               <div className="hero-badge">
@@ -192,8 +194,9 @@ export default async function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="section">
-        <div className="container" style={{ textAlign: 'center' }}>
+      <section className="section" style={{ position: 'relative', overflow: 'hidden', padding: '100px 0' }}>
+        <GlowingMathSphere />
+        <div className="container" style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
           <span className="label">Collaboration</span>
           <h2 className="title-lg" style={{ margin: '12px 0 16px' }}>Vous avez une question ?</h2>
           <p className="subtitle" style={{ maxWidth: 500, margin: '0 auto 32px' }}>
