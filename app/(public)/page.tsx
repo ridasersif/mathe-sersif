@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getCourses, getArticles, getProfile, type Course, type Article, type Profile } from '@/lib/api';
+import HeroVisual from '@/components/HeroVisual';
 import { 
   GraduationCap, 
   BookOpen, 
@@ -84,14 +85,7 @@ export default async function HomePage() {
                 ))}
               </div>
             </div>
-            <div className="hero-avatar-wrap">
-              <div className="hero-avatar" style={{ 
-                background: profile?.photo ? `url(${profile.photo}) center/cover` : 'var(--bg-secondary)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem'
-              }}>
-                {!profile?.photo && <Users size={80} strokeWidth={1} color="var(--accent-gold)" />}
-              </div>
-            </div>
+            <HeroVisual photoUrl={profile?.photo} fullName={profile?.fullName} />
           </div>
         </div>
       </section>
