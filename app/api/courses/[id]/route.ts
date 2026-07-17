@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 
+// GET /api/courses/[id] — get a single course (no auth needed)
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const admin = createAdminClient();
+  const { data, error } = await admin.from('courses').select('*').eq('id', id).single();
+  if (error || !data) return NextResponse.json({ error: 'Cours introuvable' }, { status: 404 });
+  return NextResponse.json({ course: data });
+}
+
 // PUT /api/courses/[id] — update a course
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient();

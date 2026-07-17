@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 
+// GET /api/articles/[id] — get a single article (no auth needed)
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const admin = createAdminClient();
+  const { data, error } = await admin.from('articles').select('*').eq('id', id).single();
+  if (error || !data) return NextResponse.json({ error: 'Article introuvable' }, { status: 404 });
+  return NextResponse.json({ article: data });
+}
+
 // PUT /api/articles/[id] — update an article
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient();

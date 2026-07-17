@@ -1,17 +1,18 @@
 // lib/api.ts
 // ─────────────────────────────────────────────────────────────────────────────
-// IMPORTANT: This module is used in BOTH server and client contexts.
-// - Reads (getProfile, getCourses, etc.) are called from Server Components
-//   and must use the SERVER-side Supabase client to avoid caching issues.
-// - Writes (createCourse, updateProfile, etc.) go through API routes and
-//   use fetch() — no Supabase client needed on the write path.
-// - Client-side browser usage (file uploads, auth) uses createBrowserClient.
+// ARCHITECTURE NOTE:
 //
-// The key fix for Vercel/Next.js stale data: use the server client on
-// server-side reads so no browser fetch cache or CDN caching interferes.
+// READ functions (getProfile, getCourses, getArticles, getCourse, getArticle)
+// are called from BOTH server and client components.
+//
+// SOLUTION: All reads go through our own API routes with cache: 'no-store'.
+// This guarantees fresh data on every request — no Next.js fetch cache,
+// no Vercel Edge CDN cache, no Supabase singleton cache.
+//
+// WRITE functions stay as-is (they already go through /api/* routes).
+// UPLOAD functions use the browser Supabase client directly.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { createClient as createServerClient } from '@/utils/supabase/server';
 import { createClient as createBrowserClientFn } from '@/utils/supabase/client';
 
 // Browser-only singleton (for uploads + auth + client-side realtime)
@@ -86,6 +87,15 @@ export interface Profile {
   updatedAt: string;
 }
 
+// ─── Base URL helper (works on both server and client) ───────────────────────
+
+function getBaseUrl(): string {
+  // On the server, VERCEL_URL is set automatically; locally, use localhost
+  if (typeof window !== 'undefined') return ''; // browser: relative URL is fine
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return 'http://localhost:3000';
+}
+
 // ─── Upload helpers (browser-client only) ────────────────────────────────────
 
 export async function uploadImage(file: File): Promise<{ imageUrl: string }> {
@@ -112,17 +122,66 @@ export async function uploadProfilePhoto(file: File): Promise<{ photoUrl: string
   return { photoUrl: publicData.publicUrl };
 }
 
-// ─── Courses — Server-side reads (fresh data every request on Vercel) ─────────
+// ─── Profile — via API route, always fresh ────────────────────────────────────
+
+export async function getProfile(): Promise<Profile | null> {
+  try {
+    const res = await fetch(`${getBaseUrl()}/api/profile`, {
+      cache: 'no-store',
+      next: { revalidate: 0 },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const data = json.profile;
+    if (!data) return null;
+    return {
+      id: data.id,
+      userId: data.id,
+      firstName: data.first_name,
+      lastName: data.last_name,
+      fullName: data.full_name,
+      title: data.title,
+      email: data.email,
+      phone: data.phone,
+      photo: data.photo,
+      bio: data.bio,
+      bioLong: data.bio_long,
+      institution: data.institution,
+      faculty: data.faculty,
+      department: data.department,
+      location: data.location,
+      specialties: data.specialties,
+      stats: data.stats,
+      education: data.education,
+      socialLinks: data.social_links,
+      updatedAt: data.updated_at,
+    } as Profile;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateProfile(data: any): Promise<Profile | null> {
+  const res = await fetch(`${getBaseUrl()}/api/profile/update`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || 'Erreur lors de la mise à jour du profil');
+  return getProfile();
+}
+
+// ─── Courses — via API route, always fresh ────────────────────────────────────
 
 export async function getCourses(): Promise<Course[]> {
-  // createServerClient reads cookies(); must only be called from server context
-  const db = await createServerClient();
-  const { data, error } = await db
-    .from('courses')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw new Error('Erreur lors du chargement des cours');
-  return data.map(c => ({
+  const res = await fetch(`${getBaseUrl()}/api/courses`, {
+    cache: 'no-store',
+    next: { revalidate: 0 },
+  });
+  if (!res.ok) throw new Error('Erreur lors du chargement des cours');
+  const json = await res.json();
+  return (json.courses ?? []).map((c: any) => ({
     id: c.id,
     title: c.title,
     description: c.description,
@@ -137,20 +196,24 @@ export async function getCourses(): Promise<Course[]> {
 }
 
 export async function getCourse(id: string): Promise<Course> {
-  const db = await createServerClient();
-  const { data, error } = await db.from('courses').select('*').eq('id', id).single();
-  if (error || !data) throw new Error('Cours introuvable');
+  const res = await fetch(`${getBaseUrl()}/api/courses/${id}`, {
+    cache: 'no-store',
+    next: { revalidate: 0 },
+  });
+  if (!res.ok) throw new Error('Cours introuvable');
+  const json = await res.json();
+  const c = json.course;
   return {
-    id: data.id,
-    title: data.title,
-    description: data.description,
-    category: data.category,
-    level: data.level,
-    pdfUrl: data.pdf_url,
-    pdfName: data.pdf_name,
-    imageUrl: data.image_url,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
+    id: c.id,
+    title: c.title,
+    description: c.description,
+    category: c.category,
+    level: c.level,
+    pdfUrl: c.pdf_url,
+    pdfName: c.pdf_name,
+    imageUrl: c.image_url,
+    createdAt: c.created_at,
+    updatedAt: c.updated_at,
   };
 }
 
@@ -194,15 +257,19 @@ export async function deleteCourse(id: string): Promise<void> {
   if (!res.ok) throw new Error(json.error || 'Erreur lors de la suppression du cours');
 }
 
-// ─── Articles — Server-side reads ─────────────────────────────────────────────
+// ─── Articles — via API route, always fresh ───────────────────────────────────
 
 export async function getArticles(publishedOnly = false): Promise<Article[]> {
-  const db = await createServerClient();
-  let query = db.from('articles').select('*').order('created_at', { ascending: false });
-  if (publishedOnly) query = query.eq('published', true);
-  const { data, error } = await query;
-  if (error) throw new Error('Erreur lors du chargement des articles');
-  return data.map(a => ({
+  const url = publishedOnly
+    ? `${getBaseUrl()}/api/articles?published=true`
+    : `${getBaseUrl()}/api/articles`;
+  const res = await fetch(url, {
+    cache: 'no-store',
+    next: { revalidate: 0 },
+  });
+  if (!res.ok) throw new Error('Erreur lors du chargement des articles');
+  const json = await res.json();
+  return (json.articles ?? []).map((a: any) => ({
     id: a.id,
     title: a.title,
     excerpt: a.excerpt,
@@ -216,19 +283,23 @@ export async function getArticles(publishedOnly = false): Promise<Article[]> {
 }
 
 export async function getArticle(id: string): Promise<Article> {
-  const db = await createServerClient();
-  const { data, error } = await db.from('articles').select('*').eq('id', id).single();
-  if (error || !data) throw new Error('Article introuvable');
+  const res = await fetch(`${getBaseUrl()}/api/articles/${id}`, {
+    cache: 'no-store',
+    next: { revalidate: 0 },
+  });
+  if (!res.ok) throw new Error('Article introuvable');
+  const json = await res.json();
+  const a = json.article;
   return {
-    id: data.id,
-    title: data.title,
-    excerpt: data.excerpt,
-    content: data.content,
-    tags: data.tags,
-    imageUrl: data.image_url,
-    published: data.published,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
+    id: a.id,
+    title: a.title,
+    excerpt: a.excerpt,
+    content: a.content,
+    tags: a.tags,
+    imageUrl: a.image_url,
+    published: a.published,
+    createdAt: a.created_at,
+    updatedAt: a.updated_at,
   };
 }
 
@@ -268,47 +339,6 @@ export async function deleteArticle(id: string): Promise<void> {
   const res = await fetch(`/api/articles/${id}`, { method: 'DELETE' });
   const json = await res.json();
   if (!res.ok) throw new Error(json.error || "Erreur lors de la suppression de l'article");
-}
-
-// ─── Profile — Server-side read ───────────────────────────────────────────────
-
-export async function getProfile(): Promise<Profile | null> {
-  const db = await createServerClient();
-  const { data, error } = await db.from('profiles').select('*').limit(1).single();
-  if (error) return null;
-  return {
-    id: data.id,
-    userId: data.id,
-    firstName: data.first_name,
-    lastName: data.last_name,
-    fullName: data.full_name,
-    title: data.title,
-    email: data.email,
-    phone: data.phone,
-    photo: data.photo,
-    bio: data.bio,
-    bioLong: data.bio_long,
-    institution: data.institution,
-    faculty: data.faculty,
-    department: data.department,
-    location: data.location,
-    specialties: data.specialties,
-    stats: data.stats,
-    education: data.education,
-    socialLinks: data.social_links,
-    updatedAt: data.updated_at,
-  } as any;
-}
-
-export async function updateProfile(data: any): Promise<Profile | null> {
-  const res = await fetch('/api/profile/update', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.error || 'Erreur lors de la mise à jour du profil');
-  return getProfile();
 }
 
 export async function changePassword(oldPassword: string, newPassword: string): Promise<void> {

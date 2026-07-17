@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
 import { createAdminClient } from '@/utils/supabase/admin';
 
+// GET /api/articles — list articles (no auth needed, ?published=true to filter)
+export async function GET(req: NextRequest) {
+  const admin = createAdminClient();
+  const { searchParams } = new URL(req.url);
+  const publishedOnly = searchParams.get('published') === 'true';
+  let query = admin.from('articles').select('*').order('created_at', { ascending: false });
+  if (publishedOnly) query = query.eq('published', true);
+  const { data, error } = await query;
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ articles: data ?? [] });
+}
+
 // POST /api/articles — create an article
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
