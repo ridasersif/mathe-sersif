@@ -1,11 +1,18 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState, useEffect, useTransition } from 'react';
 
-export default function SearchInput({ defaultValue = '' }: { defaultValue?: string }) {
+export default function SearchInput({ 
+  defaultValue = '', 
+  placeholder = 'Rechercher…'
+}: { 
+  defaultValue?: string;
+  placeholder?: string;
+}) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [value, setValue] = useState(defaultValue);
   const [isPending, startTransition] = useTransition();
@@ -27,7 +34,7 @@ export default function SearchInput({ defaultValue = '' }: { defaultValue?: stri
     params.delete('page');
 
     startTransition(() => {
-      router.push(`/cours?${params.toString()}`);
+      router.push(`${pathname}?${params.toString()}`);
     });
   }
 
@@ -48,7 +55,7 @@ export default function SearchInput({ defaultValue = '' }: { defaultValue?: stri
         type="text" 
         value={value}
         onChange={(e) => handleSearch(e.target.value)}
-        placeholder="Rechercher par titre, catégorie, niveau..." 
+        placeholder={placeholder}
         className="form-input" 
         style={{ 
           paddingLeft: 40, 
