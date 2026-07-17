@@ -42,6 +42,7 @@ export default function GlowingMathSphere() {
     let rotX = 0.2;
 
     function animate() {
+      if (!ctx) return;
       rotY += 0.006;
       rotX = 0.2 + Math.sin(rotY) * 0.1;
 

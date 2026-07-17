@@ -76,6 +76,7 @@ export default function InteractiveMathCanvas() {
     };
 
     function animate() {
+      if (!ctx) return;
       time += 0.015;
 
       // Smooth interpolation for mouse rotation
