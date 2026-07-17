@@ -61,7 +61,7 @@ export default async function HomePage() {
             <div className="hero-content animate-fadeUp">
               <div className="hero-badge">
                 <GraduationCap size={16} />
-                <span>{profile?.title || 'Professeur de Mathématiques'}</span>
+                <span>{profile?.title! }</span>
               </div>
               <h1 className="title-xl" style={{ marginBottom: 16 }}>
                 Professeur{' '}
