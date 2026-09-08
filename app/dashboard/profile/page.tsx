@@ -261,7 +261,6 @@ export default function ProfilePage() {
                 { label: 'Années', value: profile.stats.yearsOfExperience, color: 'var(--accent-blue)', icon: Calendar },
                 { label: 'Publications', value: profile.stats.publications, color: 'var(--accent-gold)', icon: FileText },
                 { label: 'Cours', value: profile.stats.courses, color: '#4ade80', icon: GraduationCap },
-                { label: 'Étudiants', value: profile.stats.students + '+', color: '#c084fc', icon: User },
               ].map((s) => (
                 <div key={s.label} style={{ background: 'var(--bg-primary)', borderRadius: 8, padding: '10px 8px' }}>
                   <div style={{ fontSize: '1.3rem', fontWeight: 700, color: s.color }}>{s.value}</div>
@@ -490,12 +489,9 @@ export default function ProfilePage() {
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   Ces chiffres apparaissent sur la page d'accueil et la page À propos.
                 </p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 16 }}>
                   {[
                     { key: 'yearsOfExperience' as const, label: "Années d'expérience", icon: '📅' },
-                    { key: 'publications' as const, label: 'Publications', icon: '📄' },
-                    { key: 'courses' as const, label: 'Cours disponibles', icon: '📚' },
-                    { key: 'students' as const, label: 'Étudiants formés', icon: '🎓' },
                   ].map(({ key, label, icon }) => (
                     <div key={key} className="card" style={{ padding: 20, background: 'var(--bg-primary)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>

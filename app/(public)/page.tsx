@@ -3,6 +3,7 @@ import { getCourses, getArticles, getProfile, type Course, type Article, type Pr
 import HeroVisual from '@/components/HeroVisual';
 import InteractiveMathCanvas from '@/components/InteractiveMathCanvas';
 import GlowingMathSphere from '@/components/GlowingMathSphere';
+import AnimatedCounter from '@/components/AnimatedCounter';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,8 +48,8 @@ export default async function HomePage() {
   const featArticles = articles.slice(0, 3);
 
   const stats = [
-    { label: 'Cours disponibles', value: profile?.stats?.courses || courses.length, icon: BookOpen, color: 'var(--accent-blue)' },
-    { label: 'Publications', value: profile?.stats?.publications || articles.length, icon: FileText, color: 'var(--accent-gold)' },
+    { label: 'Cours disponibles', value: courses.length, icon: BookOpen, color: 'var(--accent-blue)' },
+    { label: 'Publications', value: articles.length, icon: FileText, color: 'var(--accent-gold)' },
     { label: "Années d'expérience", value: profile?.stats?.yearsOfExperience || 20, icon: Calendar, color: '#4ade80' },
   ];
 
@@ -82,7 +83,7 @@ export default async function HomePage() {
               <div className="hero-stats">
                 {stats.map((s, i) => (
                   <div key={i}>
-                    <div className="hero-stat-value gradient-text">{s.value}+</div>
+                    <div className="hero-stat-value gradient-text"><AnimatedCounter value={Number(s.value)} />+</div>
                     <div className="hero-stat-label" style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
                       <s.icon size={14} /> {s.label}
                     </div>

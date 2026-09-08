@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getProfile, type Profile } from '@/lib/api';
+import { getProfile, getCourses, getArticles, type Profile } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +17,8 @@ import {
   Award,
   Sigma
 } from 'lucide-react';
+
+import AnimatedCounter from '@/components/AnimatedCounter';
 
 export const metadata: Metadata = {
   title: 'Rachid Sersif — Biographie & Parcours Académique',
@@ -38,8 +40,15 @@ export const metadata: Metadata = {
 
 export default async function AboutPage() {
   let profile: Profile | null = null;
+  let coursesCount = 0;
+  let articlesCount = 0;
+  
   try {
     profile = await getProfile();
+    const courses = await getCourses();
+    const articles = await getArticles(true);
+    coursesCount = courses.length;
+    articlesCount = articles.length;
   } catch {}
 
   const credentials: any[] = profile?.education || [];
@@ -121,15 +130,14 @@ export default async function AboutPage() {
               <div className="divider" />
               <div className="grid-2" style={{ gap: 12 }}>
                 {[
-                  { v: `${profile?.stats?.yearsOfExperience || 0}+`, l: "Années d'enseignement", i: Calendar },
-                  { v: `${profile?.stats?.publications || 0}+`, l: 'Publications', i: FileText },
-                  { v: `${profile?.stats?.courses || 0}`, l: 'Cours en ligne', i: BookOpen },
-                  { v: `${profile?.stats?.students || 0}+`, l: 'Étudiants formés', i: Users },
+                  { v: profile?.stats?.yearsOfExperience || 0, l: "Années d'enseignement", i: Calendar },
+                  { v: articlesCount, l: 'Articles publiés', i: FileText },
+                  { v: coursesCount, l: 'Cours en ligne', i: BookOpen },
                 ].map(({ v, l, i: Icon }) => (
                   <div key={l} className="card stat-card" style={{ padding: '20px 16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                       <Icon size={18} className="gold-text" opacity={0.6} />
-                      <div className="stat-number gradient-text" style={{ fontSize: '1.6rem' }}>{v}</div>
+                      <div className="stat-number gradient-text" style={{ fontSize: '1.6rem' }}><AnimatedCounter value={Number(v)} />+</div>
                     </div>
                     <div className="stat-label" style={{ fontSize: '0.75rem' }}>{l}</div>
                   </div>
