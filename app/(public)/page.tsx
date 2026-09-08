@@ -4,6 +4,7 @@ import HeroVisual from '@/components/HeroVisual';
 import InteractiveMathCanvas from '@/components/InteractiveMathCanvas';
 import GlowingMathSphere from '@/components/GlowingMathSphere';
 import AnimatedCounter from '@/components/AnimatedCounter';
+import ContactSection from '@/components/ContactSection';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,33 +108,31 @@ export default async function HomePage() {
           </div>
           {featCourses.length > 0 ? (
             <div className="grid-3">
-              {featCourses.map((c: Course) => (
-                <div key={c.id} className="card course-card">
-                  <div className="card-image">
+              {featCourses.map((c: Course, index: number) => (
+                <div key={c.id} className="course-card-v2" style={{ animationDelay: `${index * 0.15}s` }}>
+                  <div className="course-card-v2-image-box">
                     <img src={c.imageUrl || `https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800`} alt={c.title} />
-                  </div>
-                  <div className="course-card-header">
-                    <div className="course-icon">
+                    <span className="course-card-v2-badge">{c.level}</span>
+                    <div className="course-card-v2-icon">
                       {(() => {
                         const Icon = categoryIcons[c.category] || categoryIcons.default;
                         return <Icon size={24} />;
                       })()}
                     </div>
-                    <span className="tag tag-gold">{c.level}</span>
                   </div>
-                  <h3 className="course-title">{c.title}</h3>
-                  <p className="course-desc">{c.description}</p>
-                  <div className="course-meta">
-                    <span className="tag">{c.category}</span>
-                  </div>
-                  <div className="course-actions">
-                    <a href={c.pdfUrl} download={c.pdfName} className="btn btn-primary btn-sm">
-                      <Download size={16} />
-                      Télécharger
-                    </a>
-                    <Link href={`/cours/${c.id}`} className="btn btn-ghost btn-sm">
-                      Détails
-                    </Link>
+                  <div className="course-card-v2-content">
+                    <div className="course-card-v2-category">{c.category}</div>
+                    <h3 className="course-card-v2-title">{c.title}</h3>
+                    <p className="course-card-v2-desc">{c.description}</p>
+                    <div className="course-card-v2-actions">
+                      <Link href={`/cours/${c.id}`} className="btn-pill btn-pill-primary">
+                        Détails
+                      </Link>
+                      <a href={c.pdfUrl} download={c.pdfName} className="btn-pill btn-pill-accent">
+                        <Download size={16} />
+                        PDF
+                      </a>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -197,19 +196,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="section" style={{ position: 'relative', overflow: 'hidden', padding: '100px 0' }}>
+      {/* Contact Section */}
+      <section className="section" id="contact" style={{ position: 'relative', overflow: 'hidden', padding: '100px 0' }}>
         <GlowingMathSphere />
-        <div className="container" style={{ position: 'relative', zIndex: 2, textAlign: 'center' }}>
-          <span className="label">Collaboration</span>
-          <h2 className="title-lg" style={{ margin: '12px 0 16px' }}>Vous avez une question ?</h2>
-          <p className="subtitle" style={{ maxWidth: 500, margin: '0 auto 32px' }}>
-            N'hésitez pas à me contacter pour toute question académique ou collaboration de recherche.
-          </p>
-          <Link href="/about#contact" className="btn btn-gold btn-lg">
-            <Mail size={20} style={{ marginRight: 8 }} />
-            Me contacter
-          </Link>
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+          <div className="section-header centered">
+            <span className="label">Collaboration</span>
+            <h2 className="title-lg" style={{ marginTop: 8 }}>Vous avez une question ?</h2>
+            <div className="divider" />
+          </div>
+          <ContactSection profile={profile} />
         </div>
       </section>
     </>

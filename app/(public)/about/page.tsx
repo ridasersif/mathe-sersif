@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 import AnimatedCounter from '@/components/AnimatedCounter';
+import ContactSection from '@/components/ContactSection';
 
 export const metadata: Metadata = {
   title: 'Rachid Sersif — Biographie & Parcours Académique',
@@ -196,20 +197,12 @@ export default async function AboutPage() {
           </div>
 
           {/* Contact */}
-          <div id="contact" className="card" style={{ textAlign: 'center', padding: '48px 32px' }}>
-            <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--bg-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: 'var(--accent-gold)' }}>
-              <Mail size={32} />
-            </div>
-            <h2 className="title-md" style={{ marginBottom: 12 }}>Me contacter</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: 24, maxWidth: 400, margin: '0 auto 24px' }}>
-              Pour toute question académique, collaboration de recherche ou demande d'information concernant les cours.
-            </p>
-            <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a href={`mailto:${profile?.email || '...'}`} className="btn btn-primary btn-lg">
-                {profile?.email || '...'}
-              </a>
-              <Link href="/cours" className="btn btn-ghost btn-lg">Voir les cours</Link>
-            </div>
+          <div id="contact" style={{ marginBottom: 48 }}>
+            <h2 className="title-md" style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Mail size={20} className="gold-text" /> Me contacter
+            </h2>
+            <div className="divider" />
+            <ContactSection profile={profile} />
           </div>
         </div>
       </section>
