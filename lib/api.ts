@@ -90,9 +90,13 @@ export interface Profile {
 // ─── Base URL helper (works on both server and client) ───────────────────────
 
 function getBaseUrl(): string {
-  // On the server, VERCEL_URL is set automatically; locally, use localhost
-  if (typeof window !== 'undefined') return ''; // browser: relative URL is fine
+  // Browser: relative URL is fine
+  if (typeof window !== 'undefined') return '';
+  // Server: prefer the canonical site URL (set this in Vercel env vars)
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  // Fallback: Vercel auto-sets VERCEL_URL (deployment URL, may differ from canonical)
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  // Local development
   return 'http://localhost:3000';
 }
 
