@@ -232,9 +232,9 @@ export default function InteractiveMathCanvas() {
       ctx.font = 'italic 11px Georgia';
       const equations = [
         { text: 'e^(iπ) + 1 = 0', x: 120 * Math.sin(time * 0.5), y: -100 + 15 * Math.sin(time), z: 120 * Math.cos(time * 0.5) },
-        { text: '∫ x² dx = x³/3', x: 140 * Math.sin(time * 0.4 + 2), y: 80 + 10 * Math.cos(time * 0.8), z: 140 * Math.cos(time * 0.4 + 2) },
-        { text: '∇ × E = -∂B/∂t', x: 160 * Math.sin(time * 0.3 + 4), y: -20 + 20 * Math.sin(time * 0.5), z: 160 * Math.cos(time * 0.3 + 4) },
-        { text: 'iℏ ∂/∂t |ψ⟩ = Ĥ|ψ⟩', x: 130 * Math.sin(time * 0.6 + 1), y: 120, z: 130 * Math.cos(time * 0.6 + 1) }
+        { text: '∫ e^(-x²) dx = √π', x: 140 * Math.sin(time * 0.4 + 2), y: 80 + 10 * Math.cos(time * 0.8), z: 140 * Math.cos(time * 0.4 + 2) },
+        { text: 'F(ω) = ∫ f(t)e^(-iωt)dt', x: 160 * Math.sin(time * 0.3 + 4), y: -20 + 20 * Math.sin(time * 0.5), z: 160 * Math.cos(time * 0.3 + 4) },
+        { text: 'ζ(s) = Σ 1/n^s', x: 130 * Math.sin(time * 0.6 + 1), y: 120, z: 130 * Math.cos(time * 0.6 + 1) }
       ];
 
       equations.forEach(eq => {

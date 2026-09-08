@@ -9,9 +9,10 @@ import { createClient } from '@/utils/supabase/client';
 
 const links = [
   { href: '/', label: 'Accueil' },
-  { href: '/cours', label: 'Cours' },
-  { href: '/articles', label: 'Articles' },
-  { href: '/about', label: 'À Propos' },
+  { href: '/cours', label: 'Mes Cours' },
+  { href: '/articles', label: 'Publications' },
+  { href: '/about', label: 'À propos' },
+  { href: '/about#contact', label: 'Contact' },
 ];
 
 export default function Navbar() {
@@ -56,7 +57,7 @@ export default function Navbar() {
       <div className="container navbar-inner">
         <Link href="/" className="navbar-logo">
           <img src="/image.png" alt="Sersif Logo" style={{ height: 40, width: 'auto' }} />
-          <span>{profile?.fullName ? `Prof. ${profile.lastName}` : 'Mathe Sersif'}</span>
+          <span>Professeur de Mathématiques</span>
         </Link>
 
         {/* Desktop nav */}

@@ -62,27 +62,27 @@ export default async function HomePage() {
             <div className="hero-content animate-fadeUp">
               <div className="hero-badge">
                 <GraduationCap size={16} />
-                <span>{profile?.title! }</span>
+                <span>{profile?.title!}</span>
               </div>
-              <h1 className="title-xl" style={{ marginBottom: 16 }}>
+              <h1 className="title-xl" style={{ marginBottom: 16, whiteSpace: 'nowrap' }}>
                 Professeur{' '}
-                <span className="gold-text">{profile?.fullName || '...'}</span>
+                <span className="gold-text" style={{ textTransform: 'capitalize' }}>{profile?.fullName || '...'}</span>
               </h1>
               <p className="subtitle" style={{ marginBottom: 32 }}>
                 {profile?.bio || "Bienvenue sur ma plateforme académique."}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <Link href="/cours" className="btn btn-primary btn-lg">
-                  <BookOpen size={20} style={{ marginRight: 8 }} />
                   Voir les cours
+                  <ArrowRight size={20} style={{ marginLeft: 8 }} />
                 </Link>
-                <Link href="/about" className="btn btn-ghost btn-lg">
+                <Link href="/about" className="btn btn-outline btn-lg">
                   En savoir plus
                 </Link>
               </div>
               <div className="hero-stats">
                 {stats.map((s, i) => (
-                  <div key={i}>
+                  <div key={i} style={{ textAlign: 'center' }}>
                     <div className="hero-stat-value gradient-text"><AnimatedCounter value={Number(s.value)} />+</div>
                     <div className="hero-stat-label" style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'center' }}>
                       <s.icon size={14} /> {s.label}
