@@ -6,12 +6,15 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Rachid Sersif — Professeur & Docteur en Mathématiques',
-    template: '%s | Rachid Sersif',
+    default: 'Mathe Sersif | Professeur & Docteur en Mathématiques',
+    template: '%s | Mathe Sersif',
   },
   description:
-    "Rachid Sersif, Docteur en Math\u00e9matiques (2024) et Professeur de lyc\u00e9e depuis 2015. Passionn\u00e9 par l\u2019enseignement, la recherche et le partage des connaissances scientifiques. Cours, articles et publications en ligne.",
+    "Mathe Sersif - La plateforme officielle de Rachid Sersif, Docteur en Mathématiques (2024) et Professeur de lycée. Cours de mathématiques, articles et publications en ligne.",
   keywords: [
+    'mathe',
+    'mathe sersif',
+    'mathe-sersif',
     'Rachid Sersif',
     'math sersif',
     'sersif mathématiques',
@@ -34,24 +37,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'fr_MA',
     url: 'https://mathe-sersif.vercel.app',
-    siteName: 'Rachid Sersif — Mathématiques',
-    title: 'Rachid Sersif — Professeur & Docteur en Mathématiques',
+    siteName: 'Mathe Sersif — Mathématiques',
+    title: 'Mathe Sersif | Professeur & Docteur en Mathématiques',
     description:
-      'Docteur en Mathématiques (2024) et Professeur de lycée depuis 2015. Cours, articles de recherche et publications scientifiques.',
+      'Mathe Sersif - Plateforme de Rachid Sersif, Docteur en Mathématiques (2024). Cours, articles de recherche et publications scientifiques.',
     images: [
       {
         url: '/image.png',
         width: 1200,
         height: 630,
-        alt: 'Rachid Sersif — Plateforme Mathématiques',
+        alt: 'Mathe Sersif — Plateforme Mathématiques',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rachid Sersif — Professeur & Docteur en Mathématiques',
+    title: 'Mathe Sersif | Professeur & Docteur en Mathématiques',
     description:
-      'Docteur en Mathématiques (2024) et Professeur de lycée depuis 2015. Cours, articles et publications en ligne.',
+      'Mathe Sersif - Docteur en Mathématiques (2024) et Professeur de lycée depuis 2015. Cours, articles et publications en ligne.',
     images: ['/image.png'],
   },
   robots: {
