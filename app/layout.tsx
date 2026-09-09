@@ -6,11 +6,11 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Mathe Sersif | Professeur & Docteur en Mathématiques',
-    template: '%s | Mathe Sersif',
+    default: 'Rachid Sersif | Mathe Sersif — Professeur & Docteur en Mathématiques',
+    template: '%s | Rachid Sersif',
   },
   description:
-    "Mathe Sersif - La plateforme officielle de Rachid Sersif, Docteur en Mathématiques (2024) et Professeur de lycée. Cours de mathématiques, articles et publications en ligne.",
+    "Plateforme officielle de Rachid Sersif, Docteur en Mathématiques (2024) et Professeur de lycée. Mathe Sersif propose des cours de mathématiques, articles et publications en ligne.",
   keywords: [
     'mathe',
     'mathe sersif',
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     locale: 'fr_MA',
     url: 'https://mathe-sersif.vercel.app',
     siteName: 'Mathe Sersif — Mathématiques',
-    title: 'Mathe Sersif | Professeur & Docteur en Mathématiques',
+    title: 'Rachid Sersif | Mathe Sersif — Professeur & Docteur en Mathématiques',
     description:
-      'Mathe Sersif - Plateforme de Rachid Sersif, Docteur en Mathématiques (2024). Cours, articles de recherche et publications scientifiques.',
+      'Plateforme de Rachid Sersif, Docteur en Mathématiques (2024). Cours, articles de recherche et publications scientifiques.',
     images: [
       {
         url: '/image.png',

@@ -67,10 +67,10 @@ export default async function HomePage() {
               </div>
               <h1 className="title-xl" style={{ marginBottom: 16, whiteSpace: 'nowrap' }}>
                 Professeur{' '}
-                <span className="gold-text" style={{ textTransform: 'capitalize' }}>{profile?.fullName || '...'}</span>
+                <span className="gold-text" style={{ textTransform: 'capitalize' }}>{profile?.fullName || 'Rachid Sersif'}</span>
               </h1>
               <p className="subtitle" style={{ marginBottom: 32 }}>
-                {profile?.bio || "Bienvenue sur ma plateforme académique."}
+                {profile?.bio || "Plateforme officielle de Rachid Sersif, Docteur en Mathématiques."}
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <Link href="/cours" className="btn btn-primary btn-lg">
