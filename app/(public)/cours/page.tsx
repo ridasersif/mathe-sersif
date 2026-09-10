@@ -123,35 +123,32 @@ export default async function CoursPage({
           {paginated.length > 0 ? (
             <>
               <div className="grid-3">
-                {paginated.map((c: Course) => (
-                  <div key={c.id} className="card course-card animate-fadeUp">
-                    <div className="card-image">
+                {paginated.map((c: Course, index: number) => (
+                  <div key={c.id} className="course-card-v2" style={{ animationDelay: `${index * 0.15}s` }}>
+                    <div className="course-card-v2-image-box">
                       <img src={c.imageUrl || `https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800`} alt={c.title} />
-                    </div>
-                    <div className="course-card-header">
-                      <div className="course-icon">
+                      <span className="course-card-v2-badge">{c.level}</span>
+                      <div className="course-card-v2-icon">
                         {(() => {
                           const Icon = categoryIcons[c.category] || categoryIcons.default;
                           return <Icon size={24} />;
                         })()}
                       </div>
-                      <span className="tag tag-gold">{c.level}</span>
                     </div>
-                    <h2 className="course-title">{c.title}</h2>
-                    <p className="course-desc">{c.description}</p>
-                    <div className="course-meta">
-                      <span className="tag">{c.category}</span>
-                      <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                        {new Date(c.createdAt).toLocaleDateString('fr-FR')}
-                      </span>
-                    </div>
-                    <div className="course-actions">
-                      <a href={c.pdfUrl} download={c.pdfName} className="btn btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <Download size={14} /> Télécharger
-                      </a>
-                      <Link href={`/cours/${c.id}`} className="btn btn-ghost btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <Eye size={14} /> Voir
-                      </Link>
+                    <div className="course-card-v2-content">
+                      <div className="course-card-v2-category">{c.category}</div>
+                      <h3 className="course-card-v2-title">{c.title}</h3>
+                      <p className="course-card-v2-desc">{c.description}</p>
+                      <div className="course-card-v2-actions">
+                        <Link href={`/cours/${c.id}`} className="btn-pill btn-pill-primary">
+                          <Eye size={16} />
+                          Détails
+                        </Link>
+                        <a href={c.pdfUrl} download={c.pdfName} className="btn-pill btn-pill-accent">
+                          <Download size={16} />
+                          PDF
+                        </a>
+                      </div>
                     </div>
                   </div>
                 ))}
